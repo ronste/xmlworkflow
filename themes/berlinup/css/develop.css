@@ -1,0 +1,23 @@
+@media print {
+    
+    @page {
+        @top-left-corner {
+            content: "TESTBILD";
+            background-color: yellowgreen;
+        }
+    }
+
+    @page {
+        @bottom-right-corner {
+            background-color: yellowgreen;
+        }
+    }
+
+    html {
+        background-color: green;
+    }
+
+    body {
+        background-color: red;
+    }
+}

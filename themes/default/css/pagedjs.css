@@ -1,0 +1,86 @@
+@media print {
+    /* All your print styles go here */
+
+    @page {
+        size: A4;
+        margin-top: 20mm;
+        margin-bottom: 25mm;
+        margin-left: 20mm;
+        margin-right: 15mm;
+        background-color: white;
+        bleed: 6mm;
+        marks: crop cross;
+    }
+
+    @page:first {
+        margin-top: 0mm;
+    }
+
+    html {
+        background-color: lightgray;
+    }
+
+    body {
+        width: var(--pagedjs-pagebox-width);
+        height: var(--pagedjs-pagebox-height);
+        background-color: darkgray;
+    }
+
+    @page {
+        @bottom-right-corner {
+            content: counter(page);
+        }
+    }
+
+    
+
+    h1.document-title {
+        string-set: title content(text);
+    }
+
+    @page {
+        @top-right {
+            content: string(title);
+        }
+    }
+
+    @page:first {
+        @top-right {
+            content: none;
+        }
+    }
+
+    #header p {
+        string-set: journal-title content(text);
+    }
+
+    @page {
+        @right-top {
+            content: string(journal-title);
+            width: 100mm;
+            height: 10mm;
+            transform: rotate(-90deg);
+            transform-origin: top left;
+            position: relative;
+            top: 125mm;
+            left: 10mm;
+            background-color: #3c6478;;
+            color: white;
+        }
+    }
+
+    @page:first {
+        @right-top {
+            content: none;
+            background-color: none;
+            color: none;
+            width: 0px;
+            height: 0px;
+        }
+    }
+
+    /* shifts pdf pages upwards and remove grey edge on to of the pdf pages */
+    /* div {
+        margin-top: 0em;
+    } */
+}
