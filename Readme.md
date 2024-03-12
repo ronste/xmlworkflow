@@ -8,7 +8,7 @@
 This repo contains a container image assembling different open source tools and a range of open source template files into a toolchain that provides a docx -> xml -> html -> pdf workflow for single-source Jats-XML publishing.
 
 ***NOTE: This repo is under development.***
-This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. Documantation is incomplete.
+This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
 
 The tools included are:
 
@@ -17,9 +17,10 @@ The tools included are:
 - Saxon HE 12 4J
 - mathjax-full 3.2.2
 - pagedjs-cli 0.4.3 (with puppeteer 22.4.1)
+- WeasyPrint version 57.2
 - just-install 2.0.1 (for task execution)
 
-Template files and other sources (e.g. css) are dereived from HTML:
+Template files and other sources (e.g. css) are dereived from:
 
 - Pandoc default templates
 - Preview of NISO JATS Publishing 1.0 XML
