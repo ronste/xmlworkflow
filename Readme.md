@@ -88,6 +88,11 @@ You can then use the theme by providing the option `theme=<folder name>` and cus
 
 Todo: Write more documentation
 
+## Next steps
+
+- Continues imporovements of template files
+- Implementation a web app to provide a REST-API to handle [Dar packages](https://github.com/substance/dar)
+
 ## Disclaimer
 
 This repo is developed in the context of the services offered by Berlin Universities Publishing Journals (operated by the University Library FU Berlin) and licensed under GNU GENERAL PUBLIC LICENSE Version 3.
