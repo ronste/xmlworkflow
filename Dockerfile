@@ -78,6 +78,6 @@ RUN set -xe && cd root \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx
 
-COPY "xmlContainer/themes" "/root/xmlworkflow/themes"
-COPY "xmlContainer/work/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
+COPY "themes" "/root/xmlworkflow/themes"
+COPY "work/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
 
