@@ -90,8 +90,9 @@ Todo: Write more documentation
 
 ## Next steps
 
-- Continues imporovements of template files
+- Continuous imporovements of template files
 - Implementation a web app to provide a REST-API to handle [Dar packages](https://github.com/substance/dar)
+- considering pagedjs polyfill vs pagedjs-cli
 
 ## Disclaimer
 
