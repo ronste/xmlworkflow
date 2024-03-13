@@ -1384,14 +1384,14 @@ or pipeline) parameterized.
              (degrees)*,
              (address | aff | aff-alternatives | author-comment | bio | email |
               ext-link | on-behalf-of | role | uri | xref)*)       -->
-            <div id="contrib-identify" class="cell" style="text-align: right; display:inline-block;">
+            <div class="cell contrib-identify" style="text-align: right; display:inline-block;">
               <xsl:call-template name="contrib-identify">
                 <!-- handles (contrib-id)*,
                   (anonymous | collab | collab-alternatives |
                    name | name-alternatives | degrees | xref) -->
               </xsl:call-template>
             </div>
-            <div id="contrib-info" class="cell" style="text-align: right; display:inline-block;">
+            <div class="cell contrib-info" style="text-align: right; display:inline-block;">
               <xsl:call-template name="contrib-info">
                 <!-- handles
                      (address | aff | author-comment | bio | email |
@@ -1606,7 +1606,7 @@ or pipeline) parameterized.
       </xsl:with-param>
       <xsl:with-param name="contents">
         <xsl:call-template name="named-anchor"/>
-        <xsl:apply-templates/>
+        <xsl:apply-templates  mode="metadata"/>
       </xsl:with-param>
     </xsl:call-template>
   </xsl:template>
@@ -3078,6 +3078,17 @@ or pipeline) parameterized.
     </p>
   </xsl:template>
   
+  <xsl:template match="fn/p" mode="metadata">
+    <p>
+      <xsl:call-template name="assign-id"/>
+      <xsl:if test="not(preceding-sibling::p)">
+        <!-- drop an inline label text into the first p -->
+        <xsl:apply-templates select="parent::fn" mode="label-text"/>
+        <xsl:text> </xsl:text>
+      </xsl:if>
+      <xsl:value-of select="./text()"/>
+    </p>
+  </xsl:template>
   
   <!-- ============================================================= -->
   <!--  MODE 'label-text'

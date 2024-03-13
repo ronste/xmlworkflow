@@ -156,7 +156,7 @@ html-: _default
   # validate html
   if [ "{{ validate }}" = "true" ]; then \
     echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
-    xmllint "$WORK_PATH/{{docx}}_SaxonHE.html" --noout --dtdvalid; \
+    xmllint "$WORK_PATH/{{docx}}_SaxonHE.html" --noout --valid --html; \
       if [ $? -eq 0 ]; then \
         echo -e "{{hcs}}Validation successfull{{nc}}"; \
       else \

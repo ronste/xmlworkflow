@@ -93,6 +93,7 @@ Todo: Write more documentation
 - Continuous imporovements of template files
 - Implementation a web app to provide a REST-API to handle [Dar packages](https://github.com/substance/dar)
 - considering pagedjs polyfill vs pagedjs-cli
+- revise handling of resource files between themes
 
 ## Disclaimer
 
