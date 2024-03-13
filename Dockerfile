@@ -88,8 +88,8 @@ RUN set -xe && cd root \
     && unzip -d SaxonHE12-4J SaxonHE12-4J.zip \
     # mathjax, esm for weasyprint
     && npm install esm yargs mathjax-full \
-    # pagedjs/puppeteer
-    && npm install -g pagedjs-cli puppeteer \
+    # pagedjs/puppeteer, html validation
+    && npm install -g pagedjs-cli puppeteer html-validate \
     # for pandoc custom writer
     && wget https://luarocks.org/releases/luarocks-3.9.2.tar.gz \
     && tar zxpf luarocks-3.9.2.tar.gz \

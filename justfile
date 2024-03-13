@@ -154,15 +154,19 @@ html-: _default
   fi
   cp "$WORK_PATH/{{docx}}_SaxonHE.html" "$WORK_PATH/buffer.html"
   # validate html
+  set +e
   if [ "{{ validate }}" = "true" ]; then \
-    echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
-    xmllint "$WORK_PATH/{{docx}}_SaxonHE.html" --noout --valid --html; \
-      if [ $? -eq 0 ]; then \
-        echo -e "{{hcs}}Validation successfull{{nc}}"; \
-      else \
-        echo -e "{{wcs}}XML-document is not valid!{{nc}}"; \
-      fi \
+    echo -e "{{hcs}}Validating XML with html-validate ...{{nc}}"; \
+    # xmllint "$WORK_PATH/{{docx}}_SaxonHE.html" --noout --valid --html; \
+    # https://html-validate.org/usage/cli.html
+    html-validate "$WORK_PATH/{{docx}}_SaxonHE.html"
+    if [ $? -eq 0 ]; then \
+      echo -e "{{hcs}}Validation successfull{{nc}}"; \
+    else \
+      echo -e "{{wcs}}HTML-document is not valid!{{nc}}"; \
+    fi \
   fi
+  set -e
 
 # Convert XML to HTML using Saxon HE 12
 html: _default xml html-
