@@ -12,7 +12,7 @@ This repo is intended as a proof-of-concept tool. In particular the templates re
 
 The tools included are:
 
-- Pandoc 3.1.11.1
+- Pandoc 3.1.12.2
 - luarocks 3.9.2
 - Saxon HE 12 4J
 - mathjax-full 3.2.2
