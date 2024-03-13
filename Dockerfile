@@ -79,5 +79,5 @@ RUN set -xe && cd root \
     && chmod u+x /bin/processDocx
 
 COPY "xmlContainer/themes" "/root/xmlworkflow/themes"
-COPY "xmlContainer/work/Formatvorlage_allgemein_02_Beispiel.docx" "/root/xmlworkflow/work/Formatvorlage_allgemein_02_Beispiel.docx"
+COPY "xmlContainer/work/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
 
