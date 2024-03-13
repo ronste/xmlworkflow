@@ -320,8 +320,8 @@ or pipeline) parameterized.
           Ausgabe <xsl:value-of select="//article-meta/issue"/>
         </strong></p>
       </div>
-      <div id="berlinup_logo" style="float: right">
-        <img alt="" src="media/BerlinUP_Logo_RGB.png" height="40px"></img>
+      <div id="publisher_logo" style="float: right">
+        <img alt="" src="media/publisher_logo.png" height="40px"></img>
       </div>
     </div>
     
