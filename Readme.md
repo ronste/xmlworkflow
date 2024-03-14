@@ -1,30 +1,30 @@
 # XML Workflow Image
 
-- Version: 1.0
+- Version: 1.1 (14.3.2024)
 - Developed by: Ronald Steffen
 
 ---
 
-This repo contains a container image assembling different open source tools and a range of open source template files into a flexible framework that allows to define conversion toolchains. Currently it provides a docx -> xml -> html -> pdf toolchain for single-source Jats-XML publishing.
+This repo contains a container image assembling different open source tools and a range of open source template files into a flexible framework that allows to define conversion toolchains. Currently it provides `docx -> (Jats) XML -> html -> pdf` and `docx -> (Jats) XML -> pdf` toolchains for single-source Jats-XML publishing.
 
 ***NOTE: This repo is under development.***
 This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
 
 The tools included are:
 
-- Pandoc 3.1.12.2
-- luarocks 3.9.2
-- Saxon HE 12 4J
-- mathjax-full 3.2.2
-- pagedjs-cli 0.4.3 (with puppeteer 22.4.1)
-- WeasyPrint version 57.2
-- just-install 2.0.1 (for task execution)
+- [Pandoc](https://pandoc.org/) 3.1.12.2
+- [luarocks](https://luarocks.org/) 3.9.2
+- [Saxon HE 12 4J](https://www.saxonica.com/documentation12/documentation.xml)
+- [mathjax-full](https://www.mathjax.org/) 3.2.2
+- [Pagedjs](https://pagedjs.org/) and [pagedjs-cli](https://github.com/pubpub/pagedjs-cli) 0.4.3 (with puppeteer 22.4.1)
+- [WeasyPrint](https://weasyprint.org/) version 57.2
+- [just](https://github.com/casey/just) 2.0.1 (for task execution)
 
 Template files and other sources (e.g. css) are dereived from:
 
 - Pandoc default templates
-- Preview of NISO JATS Publishing 1.0 XML
-- NLM/NCBI  Journal Publishing 3.0 Preview HTML
+- Preview of [NISO JATS Publishing 1.0](https://jats.nlm.nih.gov/publishing/tag-library/1.0/) XML
+- [NLM/NCBI  Journal Publishing 3.0](https://dtd.nlm.nih.gov/publishing/3.0/) Preview HTML
 - Journal Publishing 3.0 APA-like Citation
 
 ## Usage
@@ -51,7 +51,7 @@ If the Jats XML file requried to create the HTML output is already present in th
 
 Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`processDocx` command:
 
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx xml pandoc-pdf"`
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx pagedjs weasyprint"`
 
 To get an overview of all options run:
 
@@ -74,19 +74,26 @@ Options:
     docx=<filename>: Specifies the path and name of the docx file to be converted.
 
 Available recipes:
-    all        # run all conversions (default)
-    html       # Convert XML to HTML using Saxon HE 12
-    pagedjs    # Generate PDF using Pagedjs
-    pandoc     # Convert docx to XML with Pandoc
-    pandoc-pdf # Generate PDF using Pandoc
-    pdf        # Generate PDF using Pandoc, Pagedjs and Weasyprint
-    weasyprint # Generate PDF using Weasyprint
-    xml        # Convert docx to XML using Pandoc + Saxon HE 12
+    all             # run all conversions (default)
+    cleanup-work    # Clean up the working directory removing all files in work and in work/media
+    html            # Convert XML to HTML using Saxon HE 12
+    pagedjs         # Generate PDF using Pagedjs
+    pandoc          # Convert docx to XML with Pandoc
+    pandoc-pdf-html # Generate PDF from HTML using Pandoc
+    pandoc-pdf-xml  # Generate PDF from XML using Pandoc
+    pdf             # Generate PDF using Pandoc, Pagedjs and Weasyprint
+    reset-example   # Clean up the working directory and reset example file
+    weasyprint      # Generate PDF using Weasyprint
+    xml             # Convert docx to XML using Pandoc + Saxon HE 12
 ```
 
 The xmlworkflow container supports the definition of custom themes, i.e. different sets of templates, css and media files.
 To create a custom theme create a copy of the folder `themes/default` within the themes folder.
 You can then use the theme by providing the option `theme=<folder name>` and customize the templates inside this folder.
+
+To run a set of different tests use:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/utils && . run_test.sh"`
 
 ## Next steps
 
@@ -94,6 +101,10 @@ You can then use the theme by providing the option `theme=<folder name>` and cus
 - Implementation a web app to provide a REST-API to handle [Dar packages](https://github.com/substance/dar)
 - considering pagedjs polyfill vs pagedjs-cli
 - revise handling of resource files between themes
+
+## Known issues
+
+- As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work wit Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
 
 ## Disclaimer
 

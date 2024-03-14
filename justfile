@@ -25,6 +25,8 @@ alias Pandoc := pandoc
 [private]
 alias pandoc-xml := pandoc
 [private]
+alias pandoc-pdf := pandoc-pdf-html
+[private]
 alias XML := xml
 [private]
 alias HTML := html
@@ -45,6 +47,7 @@ docx := '$(basename "$(find . -type f -name "*.docx" | head -n 1)")'
 debug := 'false'
 validate := 'false'
 develop := 'false'
+pandoc_from := 'HTML'
 
 # path variables
 develop_html_fragment := '$(echo "/<head/ r "$XSL_PATH/html_fragment_develop.html"")'
@@ -91,7 +94,7 @@ pandoc: _default
     --template "$UTILS_PATH/jats_template.tex" \
     -t "$UTILS_PATH/custom_jats_writer.lua" \
     -o "$WORK_PATH/{{docx}}_Pandoc.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.tmp"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
 
 # debug with:
@@ -106,10 +109,10 @@ xml-: _default
   source ~/.bashrc
   echo -e "{{hcs}}XSLT post processing with Saxon HE 12 ...{{nc}}"
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.tmp" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
     -xsl:"$UTILS_PATH/pandoc_post_process.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/buffer.tmp"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/buffer.xml"
   # validate xml
   if [ "{{ validate }}" = "true" ]; then \
     echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
@@ -135,13 +138,13 @@ html-: _default
   echo -e "{{hcs}}Converting XML to HTML with Saxon HE 12 ...{{nc}}"
   # run citation conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.tmp" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
     -xsl:"$XSL_PATH/jats-APAcit.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE_cit.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/buffer.tmp"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/buffer.xml"
   # run html conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.tmp" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
     -xsl:"$XSL_PATH/jats-html.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.html"
   # add development styles
@@ -173,28 +176,37 @@ html: _default xml html-
 
 # Generate PDF using Pandoc, Pagedjs and Weasyprint
 [private]
-pdf-: _default pandoc-pdf- pagedjs- weasyprint-
+pdf-: _default (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
 
 # Generate PDF using Pandoc, Pagedjs and Weasyprint
-pdf: _default html pandoc-pdf- pagedjs- weasyprint-
+pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
 
 # Generate PDF using Pandoc
 [no-cd, private]
-pandoc-pdf-: _default
+pandoc-pdf- pandoc_from=pandoc_from: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
-  echo -e "{{hcs}}Converting HTML to PDF with Pandoc ...{{nc}}"
-  pandoc "$WORK_PATH/buffer.html" -s \
-      -f html \
+  echo -e "{{hcs}}Converting {{pandoc_from}} to PDF with Pandoc ...{{nc}}"
+  pandoc "$WORK_PATH/buffer.{{pandoc_from}}" -s \
+      -f {{ if pandoc_from == "html" { "html" } else { "jats" } }} \
       --pdf-engine=pdflatex \
       --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
       --metadata-file="$METADATA_PATH/metadata.yaml" \
       -t pdf \
       -o "$WORK_PATH/{{docx}}_Pandoc.pdf"
 
-# Generate PDF using Pandoc
-pandoc-pdf: _default html pandoc-pdf-
+# Generate PDF from HTML using Pandoc
+pandoc-pdf-html: _default html (pandoc-pdf- pandoc_from)
+
+[private]
+pandoc-pdf-html-: _default (pandoc-pdf- pandoc_from)
+
+# Generate PDF from XML using Pandoc
+pandoc-pdf-xml: _default xml (pandoc-pdf- "XML")
+
+[private]
+pandoc-pdf-xml-: _default (pandoc-pdf- "XML")
 
 # Generate PDF using Pagedjs
 [no-cd, private]
@@ -245,10 +257,15 @@ weasyprint: _default html weasyprint-
 
 [no-cd]
 @_cleanup-tmp:
-  -rm $WORK_PATH/buffer.tmp $WORK_PATH/buffer.html 2> /dev/null
+  -rm $WORK_PATH/buffer.xml $WORK_PATH/buffer.html 2> /dev/null
 
 # Clean up the working directory removing all files in work and in work/media
 [no-cd]
 @cleanup-work:
   -rm $WORK_PATH/* 2> /dev/null
   -rm $WORK_PATH/media/* 2> /dev/null
+
+# Clean up the working directory and reset example file
+[no-cd]
+@reset-example: cleanup-work
+  cp $UTILS_PATH/Dummy_Article_Template.docx $WORK_PATH/Dummy_Article_Template.docx
