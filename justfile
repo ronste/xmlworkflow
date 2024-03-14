@@ -243,5 +243,12 @@ weasyprint-: _default
 # Generate PDF using Weasyprint
 weasyprint: _default html weasyprint-
 
-_cleanup:
-  rm "$WORK_PATH/buffer.tmp"
+[no-cd]
+@_cleanup-tmp:
+  -rm $WORK_PATH/buffer.tmp $WORK_PATH/buffer.html 2> /dev/null
+
+# Clean up the working directory removing all files in work and in work/media
+[no-cd]
+@cleanup-work:
+  -rm $WORK_PATH/* 2> /dev/null
+  -rm $WORK_PATH/media/* 2> /dev/null

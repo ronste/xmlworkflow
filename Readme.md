@@ -5,7 +5,7 @@
 
 ---
 
-This repo contains a container image assembling different open source tools and a range of open source template files into a toolchain that provides a docx -> xml -> html -> pdf workflow for single-source Jats-XML publishing.
+This repo contains a container image assembling different open source tools and a range of open source template files into a flexible framework that allows to define conversion toolchains. Currently it provides a docx -> xml -> html -> pdf toolchain for single-source Jats-XML publishing.
 
 ***NOTE: This repo is under development.***
 This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
@@ -29,7 +29,7 @@ Template files and other sources (e.g. css) are dereived from:
 
 ## Usage
 
-To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained below.
+To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained in the [documentation](Documentation.md).
 
 1) Build the conainter image according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`
 2) Run the image in a conatiner with `docker-compose up --detach`
@@ -48,6 +48,10 @@ However, each of these conversion steps can be selected individually. To only ru
 If the Jats XML file requried to create the HTML output is already present in the working directory you can run the HTML conversion without its prior conversion steps by using:
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html-"`
+
+Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`processDocx` command:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx xml pandoc-pdf"`
 
 To get an overview of all options run:
 
@@ -83,10 +87,6 @@ Available recipes:
 The xmlworkflow container supports the definition of custom themes, i.e. different sets of templates, css and media files.
 To create a custom theme create a copy of the folder `themes/default` within the themes folder.
 You can then use the theme by providing the option `theme=<folder name>` and customize the templates inside this folder.
-
-## How it works
-
-Todo: Write more documentation
 
 ## Next steps
 

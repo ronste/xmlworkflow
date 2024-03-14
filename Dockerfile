@@ -109,5 +109,6 @@ RUN set -xe && cd root \
     && chmod u+x /bin/processDocx
 
 COPY "themes" "/root/xmlworkflow/themes"
-COPY "work/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
+COPY "utils/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
+COPY "utils/metadata.yaml" "/root/xmlworkflow/work/metadata/metadata.yaml"
 
