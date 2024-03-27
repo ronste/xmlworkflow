@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.1 (14.3.2024)
+- Version: 1.2 (17.3.2024)
 - Developed by: Ronald Steffen
 
 ---
@@ -91,6 +91,14 @@ The xmlworkflow container supports the definition of custom themes, i.e. differe
 To create a custom theme create a copy of the folder `themes/default` within the themes folder.
 You can then use the theme by providing the option `theme=<folder name>` and customize the templates inside this folder.
 
+A theme may also contain its own justfile to define custom conversion steps. Not surprisingly, it should (but is not required to) import the main justfile. To run a conversion from this theme-specific justfile you directly specifiy the path to your custom justfile, e.g.:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx -f /root/xmlworkflow/themes/default/justfile help"`
+
+If you run the above command you find an additional recipes `custom-help` and `custom-example` were added.
+
+You could e.g. define a step doing a Markdown to XML conversion with Pandoc to build your own Markdown -> Jats XML -> ... conversion chain for one particular theme.
+
 To run a set of different tests use:
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/utils && . run_test.sh"`
@@ -104,7 +112,12 @@ To run a set of different tests use:
 
 ## Known issues
 
-- As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work wit Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
+- As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work with Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
+
+## Version history
+
+1.1 New recipes added
+1.2 Added feature to define theme-specific custom conversion steps
 
 ## Disclaimer
 

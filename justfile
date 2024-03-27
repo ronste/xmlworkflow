@@ -43,11 +43,11 @@ alias weasy := weasyprint
 
 # command line parameters
 theme := 'default'
-docx := '$(basename "$(find . -type f -name "*.docx" | head -n 1)")'
+docx := '$(basename "$(find $WORK_PATH -type f -name "*.docx" | head -n 1)")'
 debug := 'false'
 validate := 'false'
 develop := 'false'
-pandoc_from := 'HTML'
+pandoc_from := 'XML'
 
 # path variables
 develop_html_fragment := '$(echo "/<head/ r "$XSL_PATH/html_fragment_develop.html"")'
