@@ -16,10 +16,6 @@
         margin-top: 0mm;
     }
 
-    html {
-        background-color: rgb(246, 17, 17);
-    }
-
     body {
         width: 100% !important; /* without !important this is overwritten by definitions in HTML css file !*/
         height: 100%;

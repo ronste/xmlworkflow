@@ -103,6 +103,15 @@ To run a set of different tests use:
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/utils && . run_test.sh"`
 
+## How to develop and debug Print CSS stylesheets
+
+To help with developing and debugging Print CSS stylesheets the debug=true option is available. This will add special css to the conversion process that may help you to identify issues.
+
+This, e.g., will color backgrounds for the html and body tags as well as upper left and lower right coners. You can see this in the PDf files directly.
+
+However, more usefull is its appliation to the HTML file. To view the HTML file in print mode in Firefox open the developer tools and go to the Inspector tab.In the upper right corner of the styles section enable the icon "Toggle print media simulation for the page".
+This will show the HTML file with all @media print styles enabled and you can inspect any issues interactively.
+
 ## Next steps
 
 - Continuous imporovements of template files

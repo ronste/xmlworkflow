@@ -17,14 +17,13 @@
     }
 
     html {
-        background-color: rgb(246, 17, 17);
+        margin-top: -10px;
     }
 
     body {
         width: 100% !important; /* without !important this is overwritten by definitions in HTML css file !*/
         height: 100%;
         background-color: rgb(255, 255, 255) !important;
-        margin: 0px;
     }
 
     @page {
