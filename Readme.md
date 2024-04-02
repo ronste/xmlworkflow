@@ -112,6 +112,19 @@ This, e.g., will color backgrounds for the html and body tags as well as upper l
 However, more usefull is its appliation to the HTML file. To view the HTML file in print mode in Firefox open the developer tools and go to the Inspector tab.In the upper right corner of the styles section enable the icon "Toggle print media simulation for the page".
 This will show the HTML file with all @media print styles enabled and you can inspect any issues interactively.
 
+For specifically debugging Pagedjs issues you can add the Pagedjs polyfill to you HTML file:
+
+```html
+<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+<script type="application/javascript">
+    window.PagedConfig = {
+    auto: false
+    };
+</script>
+```
+
+However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used for the conversion) might behave differently.
+
 ## Next steps
 
 - Continuous imporovements of template files

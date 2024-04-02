@@ -213,11 +213,12 @@ or pipeline) parameterized.
       </title>
         <link rel="stylesheet" type="text/css" href="{$css}"/>
         <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        <!--<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
         <script type="application/javascript">
           window.PagedConfig = {
             auto: false
           };
-        </script>
+        </script>-->
 
         <script type="application/javascript">
           MathJax.Hub.Queue(function () {
