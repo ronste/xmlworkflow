@@ -1,23 +1,156 @@
 @media print {
-    
-    @page {
-        @top-left-corner {
-            content: "TESTBILD";
-            background-color: yellowgreen;
-        }
-    }
 
     @page {
-        @bottom-right-corner {
-            background-color: yellowgreen;
-        }
+        size: A4;
+        margin-top: 20mm;
+        margin-bottom: 25mm;
+        margin-left: 20mm;
+        margin-right: 15mm;
+        marks: crop cross;
     }
 
     html {
-        background-color: green;
+        background-color: red;
     }
 
     body {
-        background-color: red;
+        width: var(--pagedjs-width-right);
+        height: var(--pagedjs-height-right);
+        background-color: rgb(21, 180, 9);
+    }
+
+    @page {
+
+        @top-left-corner {
+            content: "top-left-corner";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+            background-color: yellow;
+        }
+
+        @top-left {
+            content: "top-left";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @top-center {
+            content: "top-center";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @top-right {
+            content: "top-right";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @top-right-corner {
+            content: "top-right-corner";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+            background-color: yellow;
+        }
+
+        @right-top {
+            content: "right-top";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;;
+        }
+
+        @right-middle {
+            content: "right-middle";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @right-bottom {
+            content: "right-bottom";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @bottom-right-corner {
+            content: "bottom-right-corner";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+            background-color: yellow;
+        }
+
+        @bottom-right {
+            content: "bottom-right";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @bottom-center {
+            content: "bottom-center";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @bottom-left {
+            content: "bottom-left";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @bottom-left-corner {
+            content: "bottom-left-corner";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+            background-color: yellow;
+        }
+
+        @left-bottom {
+            content: "left-bottom";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @left-middle {
+            content: "left-middle";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
+
+        @left-top {
+            content: "left-top";
+            color: blue;
+            border: solid;
+            text-align: center !important;
+            align-items: center;
+        }
     }
 }

@@ -105,25 +105,17 @@ To run a set of different tests use:
 
 ## How to develop and debug Print CSS stylesheets
 
-To help with developing and debugging Print CSS stylesheets the debug=true option is available. This will add special css to the conversion process that may help you to identify issues.
+To help with developing and debugging Print CSS stylesheets the develop=true option is available. This will add special css to the conversion process that may help you to identify possible issues.
 
-This, e.g., will color backgrounds for the html and body tags as well as upper left and lower right coners. You can see this in the PDf files directly.
+The applied CSS, e.g., will color backgrounds for the html and body tags and add borders to the Print CSS page margin boxes. You can see these in the Pdf files and with the Pagedjs polyfill option.
 
-However, more usefull is its appliation to the HTML file. To view the HTML file in print mode in Firefox open the developer tools and go to the Inspector tab.In the upper right corner of the styles section enable the icon "Toggle print media simulation for the page".
-This will show the HTML file with all @media print styles enabled and you can inspect any issues interactively.
+You can also view the HTML file in print mode in Firefox. To do so open the developer tools and go to the Inspector tab. In the upper right corner of the styles section enable the icon "Toggle print media simulation for the page".
+This will show the HTML file with all @media print styles enabled and you can inspect any issues interactively without added development CSS.
 
-For specifically debugging Pagedjs issues you can add the Pagedjs polyfill to you HTML file:
+For specifically debugging Pagedjs issues you can add the Pagedjs polyfill to you HTML file by using the option `pagedjs-polyfill=true`.
+However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used for the conversion) might behave differently under some circumstances (see below).
 
-```html
-<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
-<script type="application/javascript">
-    window.PagedConfig = {
-    auto: false
-    };
-</script>
-```
-
-However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used for the conversion) might behave differently.
+An empty HTML template that loads the development CSS and the Pagedjs polyfill is provided with the file `themes\default\templates\html_template_printcss.html`. You can inspect this file with your browser to learn about the basic Print CSS page layout. Note however, that Pagedjs and Weasyprint handle these layout elements differently!
 
 ## Next steps
 
@@ -136,6 +128,7 @@ However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used
 ## Known issues
 
 - As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work with Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
+- Rendering of large tables works well with Pagedjs polyfill but has issues with pagedjs-cli: page width is not considered.
 
 ## Version history
 

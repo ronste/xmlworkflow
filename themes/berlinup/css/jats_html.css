@@ -73,22 +73,32 @@ padding: 8px;
 
 div table tr:hover {background-color: #ddd;}
 
-div table th {
-padding-top: 12px;
-padding-bottom: 12px;
+div table th p.turn-right {
+padding: 0px;
 text-align: left;
-background-color:#3c6478;
-color: white;
 }
 
 .turn-right {
-  text-wrap: normal;
-  writing-mode: vertical-lr; /* Rotate text vertically */
+  text-wrap: wrap;
+  /* margin: 0px; */
+  transform: rotate(90deg);
+  white-space: normal;
+}
+
+div table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #3c6478;
+  color: white;
+  padding: 15px;
 }
 
 .turn-left {
-  text-wrap: normal;
-  writing-mode: vertical-lr; /* Rotate text vertically */
+  text-wrap: wrap;
+  /* margin: 0px; */
+  transform: rotate(-90deg);
+  white-space: normal;
 }
 
 div.license > div > a > img {

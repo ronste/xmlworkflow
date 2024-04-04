@@ -8,16 +8,6 @@
         margin-left: 20mm;
         margin-right: 15mm;
         background-color: white;
-        bleed: 6mm;
-        marks: crop cross;
-    }
-
-    @page:first {
-        margin-top: 0mm;
-    }
-
-    html {
-        margin-top: -10px;
     }
 
     body {
@@ -26,61 +16,50 @@
         background-color: darkgray;
     }
 
-    @page {
-        @bottom-right-corner {
-            content: counter(page);
-        }
+    /* this overwrites style from jats-html.css => consider separating */
+    div {
+        margin: 0px !important;
     }
 
-    
-
+    /* put the document title into a local variable */
     h1.document-title {
         string-set: title content(text);
     }
 
-    @page {
-        @top-right {
-            content: string(title);
-        }
-    }
-
-    @page:first {
-        @top-right {
-            content: none;
-        }
-    }
-
+    /* put the journal idetification into a local variable */
     #header p {
         string-set: journal-title content(text);
     }
 
     @page {
-        @right-top {
+        @bottom-right-corner {
+            content: counter(page);
+        }
+
+        /* show the title variable in the top right corner and move to right margin*/
+        /* all used margin boxes span the full width of page, i.e. top-right when alone spans full body width*/
+        @top-right {
             content: string(journal-title);
+            background-color: #3c6478;
+            color: white;
             width: 100mm;
             height: 10mm;
-            transform: rotate(-90deg);
-            transform-origin: top left;
             position: relative;
-            top: 125mm;
-            left: 10mm;
-            background-color: #3c6478;;
-            color: white;
+            transform: rotate(-90deg) translate(-150mm, 58mm);
+            text-align: center !important;
+            align-items: center;
         }
     }
 
     @page:first {
-        @right-top {
+        @top-right {
             content: none;
-            background-color: none;
-            color: none;
-            width: 0px;
-            height: 0px;
+            display: none;
         }
     }
 
-    /* shifts pdf pages upwards and remove grey edge on to of the pdf pages */
-    /* div {
-        margin-top: 0em;
-    } */
+    table {
+        table-layout: fixed;
+        page-break-inside: avoid;
+    }
 }

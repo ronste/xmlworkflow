@@ -127,7 +127,7 @@ or pipeline) parameterized.
 
   <!-- set output method as "xhtml", "html" or "xml" -->
   <!-- Pagedjs hangs with "xhtml" !!! -->
-  <xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"
+  <xsl:output method="html" indent="true" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"
     doctype-system="http://www.w3.org/TR/html4/loose.dtd"
     encoding="UTF-8"/>
 
@@ -211,19 +211,19 @@ or pipeline) parameterized.
         <xsl:value-of
           select="/article/front/article-meta/title-group/article-title[1]"/>
       </title>
-      <link rel="stylesheet" type="text/css" href="{$css}"/>
-        <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-        <script type="application/javascript">
-          window.PagedConfig = {
-            auto: false
-          };
-        </script>
-
+        <link rel="stylesheet" type="text/css" href="{$css}"/>
+        <!-- <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
         <script type="application/javascript">
           MathJax.Hub.Queue(function () {
             window.PagedPolyfill.preview();
           });
-        </script>
+        </script> -->
+        <!-- <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+        <script type="application/javascript">
+          window.PagedConfig = {
+            auto: false
+          };
+        </script> -->
     </head>
   </xsl:template>
 

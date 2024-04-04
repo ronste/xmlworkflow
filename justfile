@@ -3,7 +3,7 @@ all: _default pdf
 
 [private]
 @help:
-  echo "Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true ] [ docx=<filename> ] [ <recipe> ]"
+  echo "Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx=<filename> ] [ <recipe> ]"
   echo ""
   echo 'To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"'
   echo "If no docx file is provided the first docx file in the working dirctory will be taken."
@@ -15,6 +15,7 @@ all: _default pdf
   echo "    validate=true: Runs an XML validation with xmllint."
   echo "    develop=true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps."
   echo "    docx=<filename>: Specifies the path and name of the docx file to be converted."
+  echo "    pagedjs-polyfill=true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose."
   echo ""
   just --list
 
@@ -48,6 +49,7 @@ debug := 'false'
 validate := 'false'
 develop := 'false'
 pandoc_from := 'XML'
+pagedjs-polyfill := 'false'
 
 # path variables
 develop_html_fragment := '$(echo "/<head/ r "$XSL_PATH/html_fragment_develop.html"")'
@@ -151,11 +153,17 @@ html-: _default
   if [ "{{ develop }}" = "true" ]; then \
     echo -e "{{wcs}}Adding development styles ...{{nc}}"; \
     sed "{{develop_html_fragment}}" -i "$WORK_PATH/{{docx}}_SaxonHE.html"; \
-    cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/pagedjs.css $WORK_PATH/media/pagedjs.css; \
     cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/develop.css $WORK_PATH/media/develop.css; \
     echo -e "TODO: start development server"; \
   fi
+  # copy to buffer
   cp "$WORK_PATH/{{docx}}_SaxonHE.html" "$WORK_PATH/buffer.html"
+  # add pagedjs polyfill to output file only
+  if [ "{{ pagedjs-polyfill }}" = "true" ]; then \
+    echo -e "{{wcs}}Adding pagedjs polyfill ...{{nc}}"; \
+    sed -i '/<head>/a <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>' "$WORK_PATH/{{docx}}_SaxonHE.html"; \
+    sed -i '/<head>/a <link rel="stylesheet" type="text/css" href="media/pagedjs.css">' "$WORK_PATH/{{docx}}_SaxonHE.html"; \
+  fi
   # validate html
   set +e
   if [ "{{ validate }}" = "true" ]; then \
@@ -244,13 +252,14 @@ weasyprint-: _default
   # https://github.com/mathjax/MathJax-demos-node
   # node -r esm needs to be executed in the lib folder; just escape seqeunce does not work 
   docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/buffer.html" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/buffer.html"
   echo -e "{{hcs}}Converting to PDF with WeasyPrint ...{{nc}}"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/weasyprint.css $WORK_PATH/media/weasyprint.css
   weasyprint {{ if debug == "true" { "-d -v" } else { "" } }} \
     -m print -p \
     -s "$WORK_PATH/media/weasyprint.css" \
     {{ if develop == "true" { "-s $CSS_PATH/develop.css" } else { "" } }} \
-    -p "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{docx}}_weasyprint.pdf"
+    -p "$WORK_PATH/buffer.html" "$WORK_PATH/{{docx}}_weasyprint.pdf"
 
 # Generate PDF using Weasyprint
 weasyprint: _default html weasyprint-
