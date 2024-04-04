@@ -2580,7 +2580,7 @@ or pipeline) parameterized.
 <xsl:template match="table//p">
   <p>
     <xsl:if test="@specific-use='Tabelle-gedreht-links'">
-      <xsl:attribute name="class">turn-right</xsl:attribute>
+      <xsl:attribute name="class">turn-left</xsl:attribute>
     </xsl:if>
     <xsl:if test="@specific-use='Tabelle-gedreht-rechts'">
         <xsl:attribute name="class">turn-right</xsl:attribute>
