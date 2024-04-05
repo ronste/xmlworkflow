@@ -2577,17 +2577,17 @@ or pipeline) parameterized.
 
   <!-- RS additions to tables -->
 
-<xsl:template match="table//p">
-  <p>
-    <xsl:if test="@specific-use='Tabelle-gedreht-links'">
-      <xsl:attribute name="class">turn-right</xsl:attribute>
-    </xsl:if>
-    <xsl:if test="@specific-use='Tabelle-gedreht-rechts'">
-        <xsl:attribute name="class">turn-right</xsl:attribute>
+  <xsl:template match="table//p">
+    <p>
+      <xsl:if test="@specific-use='table-turn-left'">
+        <xsl:attribute name="class">table-turn-left</xsl:attribute>
       </xsl:if>
-    <xsl:apply-templates/>
-  </p>
-</xsl:template>
+      <xsl:if test="@specific-use='table-turn-right'">
+        <xsl:attribute name="class">table-turn-right</xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates />
+    </p>
+  </xsl:template>
   
   
   <!-- ============================================================= -->

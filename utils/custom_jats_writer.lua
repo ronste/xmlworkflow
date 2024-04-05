@@ -5,7 +5,7 @@ function Writer (doc, opts)
             -- process custom styles
             -- 1) Identify elements with custom styles based on the data provided in doc.meta.process (from metadata.yaml).
             -- 2) Process them and rewrite elements or store metadata in doc.meta 
-            -- 3) Mark processd elements as "Remove", remove elements not needed 
+            -- 3) Mark processed elements as "Remove", remove elements not needed 
             --    and move style information of elements processed later (xslt) to the 
             --    Jats 'specific-use' attribute
             if div.attr.attributes['custom-style'] then
@@ -18,7 +18,9 @@ function Writer (doc, opts)
                     processStyles['affiliations'],
                     processStyles['corresp'],
                     processStyles['keywords'],
-                    processStyles['subject'] -- equals sections in OJS
+                    processStyles['subject'], -- equals sections in OJS
+                    processStyles['table-turn-right'],
+                    processStyles['table-turn-left']
                 })
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
@@ -89,7 +91,7 @@ function Writer (doc, opts)
                         email = string.gmatch(pandoc.utils.stringify(div.content[1].content), "[%w%s.-]+@[%w.-]+%.[%w]+")()
                         doc.meta.article["author-notes"].corresp[1].email = pandoc.Inlines(email)
 
-                        -- we have to identify the corresponding auther by name
+                        -- we have to identify the corresponding author by name
                         -- get the surnames of all authors and search the corresponding string
                         for k, v in ipairs(doc.meta.author) do
                             if string.find(pandoc.utils.stringify(div.content[1].content), v.surname) then
@@ -130,7 +132,16 @@ function Writer (doc, opts)
                             doc.meta.tags = pandoc.List(tags)
                         end
                     end
-                    -- remove handled divs
+                    -- handle table rotation styles
+                    if (div.attr.attributes['custom-style'] == processStyles['table-turn-right']) then
+                        div.attr.attributes['specific-use'] = "table-turn-right"
+                        return div
+                    end
+                    if (div.attr.attributes['custom-style'] == processStyles['table-turn-left']) then
+                        div.attr.attributes['specific-use'] = "table-turn-left"
+                        return div
+                    end
+                    -- mark handled divs to remove later
                     div.attr.attributes['custom-style'] = Null
                     div.content[1] = pandoc.Str("REMOVE")
                     return div
@@ -146,6 +157,7 @@ function Writer (doc, opts)
                     'List Paragraph',
                     'Quote'
                 })
+                -- return plain content for all other processed styles
                 if styles[div.attr.attributes['custom-style']] then
                     return div.content
                 end
@@ -179,7 +191,7 @@ function Writer (doc, opts)
                     div.content[1].content:remove(1)
                     return div
                 end
-                -- set specific-used for remaining divs
+                -- set specific-use for remaining divs
                 div.attr.attributes['specific-use'] = div.attr.attributes['custom-style']
                 return div
             end

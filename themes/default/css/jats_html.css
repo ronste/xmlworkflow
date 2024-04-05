@@ -73,12 +73,12 @@ padding: 8px;
 
 div table tr:hover {background-color: #ddd;}
 
-div table th p.turn-right {
+div table th p.table-turn-right {
 padding: 0px;
 text-align: left;
 }
 
-.turn-right {
+.table-turn-right {
   text-wrap: wrap;
   /* margin: 0px; */
   transform: rotate(90deg);
@@ -94,7 +94,7 @@ div table th {
   padding: 15px;
 }
 
-.turn-left {
+.table-turn-left {
   text-wrap: wrap;
   /* margin: 0px; */
   transform: rotate(-90deg);

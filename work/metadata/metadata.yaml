@@ -83,6 +83,9 @@ processStyles:
   authorNames: "Autor*in Name"
   affiliations: "Autor*in Affiliation"
   corresp: "Corresponding Author"
+  table-turn-right: "Tabelle-gedreht-rechts"
+  table-turn-left: "Tabelle-gedreht-links"
+  table-caption: "Beschriftung Tabelle"
 ignoreStyles:
 # this defines docx format templates to ignore
 - Zeitschriften-Logo
