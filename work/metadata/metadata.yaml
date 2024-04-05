@@ -86,6 +86,7 @@ processStyles:
   table-turn-right: "Tabelle-gedreht-rechts"
   table-turn-left: "Tabelle-gedreht-links"
   table-caption: "Beschriftung Tabelle"
+  figure-caption: "Beschriftung Abbildung"
 ignoreStyles:
 # this defines docx format templates to ignore
 - Zeitschriften-Logo
@@ -99,4 +100,6 @@ ignoreStyles:
 - Lizenzinformationen
 - Zitiervorschlag
 - Bibliography
+tableLabel: "Tabelle"
+figureLabel: "Abbildung"
 ...

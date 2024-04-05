@@ -20,7 +20,7 @@
         </xsl:copy>
     </xsl:template>
     
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'Abbildung') and ./p]">
+    <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure') and ./p]">
         <xsl:variable name="fig_id" select="replace(@specific-use,' ','-')"/>
         <fig id="{$fig_id}" position="float" orientation="portrait">
             <xsl:apply-templates select="*|node()">
@@ -30,21 +30,21 @@
         </fig>
     </xsl:template>
     
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'Abbildung')]/p">
-        <label><xsl:value-of select="./parent::node()/@specific-use"/></label>
+    <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure')]/p">
+        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, ':')"/></label>
         <caption>
             <p><xsl:apply-templates select="@*|node()"/></p>
         </caption>
     </xsl:template>
     
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'Tabelle') and parent::node()[name() = 'table-wrap']]/p">
-        <label><xsl:value-of select="./parent::node()/@specific-use"/></label>
+    <xsl:template match="//boxed-text[starts-with(@specific-use, 'table') and parent::node()[name() = 'table-wrap']]/p">
+        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, ':')"/></label>
         <caption>
             <p><xsl:apply-templates select="@*|node()"/></p>
         </caption>
     </xsl:template>
     
-    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'Tabelle')]]">
+    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'table')]]">
         <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
     </xsl:template>
 
@@ -53,7 +53,7 @@
     </xsl:template>
     
     <xsl:template match="//table-wrap/boxed-text">
-        <xsl:apply-templates select="boxed-text" />
+        <xsl:apply-templates select="@*|node()" />
     </xsl:template>
     
     <xsl:template match="//boxed-text/*" mode="specific-use">

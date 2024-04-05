@@ -162,28 +162,28 @@ function Writer (doc, opts)
                     return div.content
                 end
                 -- set figure label
-                local styles = Set({'Abbildung','Beschriftung Abbildung'})
+                local styles = Set({pandoc.utils.stringify(doc.meta.figureLabel), processStyles['figure-caption']})
                 if styles[div.attr.attributes['custom-style']] then
-                    if (div.attr.attributes['custom-style'] == 'Abbildung') then
+                    if (div.attr.attributes['custom-style'] == pandoc.utils.stringify(doc.meta.figureLabel)) then
                         -- count number of figures
                         figCount = figCount + 1
-                        div.attr.attributes['specific-use'] = div.attr.attributes['custom-style']..' '..figCount
+                        div.attr.attributes['specific-use'] = 'figure'..figCount..':'..pandoc.utils.stringify(doc.meta.figureLabel)..' '..figCount
                     else
                         -- remove Word figure label
                         div.content[1].content:remove(1)
                         div.content[1].content:remove(1)
                         div.content[1].content:remove(1)
                         div.content[1].content:remove(1)
-                        div.attr.attributes['specific-use'] = div.attr.attributes['custom-style']
+                        div.attr.attributes['specific-use'] = 'figure'
                     end
                     return div
                 end
                 -- set table label
-                local styles = Set({'Beschriftung Tabelle'})
+                local styles = Set({processStyles['table-caption']})
                 if styles[div.attr.attributes['custom-style']] then
                     -- count number of tables
                     tableCount = tableCount + 1
-                    div.attr.attributes['specific-use'] = 'Tabelle '..tableCount
+                    div.attr.attributes['specific-use'] = 'table '..tableCount..':'..pandoc.utils.stringify(doc.meta.tableLabel)..' '..tableCount
                     -- remove Word table label (and Spaces)
                     div.content[1].content:remove(1)
                     div.content[1].content:remove(1)
@@ -224,10 +224,10 @@ function Writer (doc, opts)
     local jats = pandoc.write(d, 'jats+element_citations', opts)
 
     -- combine boxed-text graphic and caption paragraph
-    jats = jats:gsub('</boxed%-text>\n%s+<boxed%-text specific%-use="Beschriftung Abbildung">\n%s+','  ')
+    jats = jats:gsub('</boxed%-text>\n%s+<boxed%-text specific%-use="figure">\n%s+','  ')
 
     -- combine boxed-text table label with table-wrap
-    jats = jats:gsub('<boxed%-text specific%-use="Tabelle ','<table-wrap>\n        <boxed-text specific-use="Tabelle')
+    jats = jats:gsub('<boxed%-text specific%-use="table ','<table-wrap>\n        <boxed-text specific-use="table')
     jats = jats:gsub('</boxed%-text>\n%s+<table%-wrap>','  </boxed-text>');
     jats = jats:gsub('dtd%-version="1.2"','dtd-version="1.3"');
 
