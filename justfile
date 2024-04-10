@@ -115,17 +115,9 @@ xml-: _default
     -xsl:"$UTILS_PATH/pandoc_post_process.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/buffer.xml"
-  # validate xml
   if [ "{{ validate }}" = "true" ]; then \
-    echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
-    xmllint "$WORK_PATH/{{docx}}_SaxonHE.xml" --noout --dtdvalid; \
-      if [ $? -eq 0 ]; then \
-        echo -e "{{hcs}}Validation successfull{{nc}}"; \
-      else \
-        echo -e "{{wcs}}XML-document is not valid!{{nc}}"; \
-      fi \
+    just xml-validate "$WORK_PATH/{{docx}}_SaxonHE.xml"; \
   fi
-
 # Convert docx to XML using Pandoc + Saxon HE 12
 xml: pandoc xml-
 
@@ -264,9 +256,33 @@ weasyprint-: _default
 # Generate PDF using Weasyprint
 weasyprint: _default html weasyprint-
 
+#Generate Jats XML using the docxtojats converter
+docxtojats: _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  php $LIB_PATH/docxToJats/docxtojats.php $WORK_PATH/{{docx}} $WORK_PATH/{{docx}}_docxtojats.xml
+  cp $WORK_PATH/{{docx}}_docxtojats.xml $WORK_PATH/buffer.xml
+
 [no-cd]
 @_cleanup-tmp:
   -rm $WORK_PATH/buffer.xml $WORK_PATH/buffer.html 2> /dev/null
+
+#Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+xml-validate filename="false":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ "{{ filename }}" != "false" ]; then \
+    echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
+    xmllint {{filename}} --noout --dtdvalid; \
+      if [ $? -eq 0 ]; then \
+        echo -e "{{hcs}}Validation successfull{{nc}}"; \
+      else \
+        echo -e "{{wcs}}XML-document is not valid!{{nc}}"; \
+      fi \
+  else \
+    echo -e "{{wcs}}Please provide a filename to validate!{{nc}}"; \
+  fi
 
 # Clean up the working directory removing all files in work and in work/media
 [no-cd]
@@ -278,3 +294,7 @@ weasyprint: _default html weasyprint-
 [no-cd]
 @reset-example: cleanup-work
   cp $UTILS_PATH/Dummy_Article_Template.docx $WORK_PATH/Dummy_Article_Template.docx
+
+#Run different test scripts
+@runtests:
+  $UTILS_PATH/run_tests.sh

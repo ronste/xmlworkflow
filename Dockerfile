@@ -15,7 +15,10 @@ ENV SYS_PACKAGES \
 # development packages
 ENV DEV_PACKAGES \
     # for pandoc custom writer
-    build-essential
+    build-essential \
+    php \
+    php-zip \
+    php-xml
 
 ENV DEV_PACKAGES_2 \
     # for weasyprint
@@ -78,6 +81,8 @@ RUN set -xe && cd root \
     && mkdir xmlworkflow/work/media \
     && mkdir xmlworkflow/work/metadata\
     && cd xmlworkflow/lib \
+    ## docx2jats
+    && git clone https://github.com/Vitaliy-1/docxToJats.git \
     # Pandoc
     && arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
     && wget https://github.com/jgm/pandoc/releases/download/3.1.12.2/pandoc-3.1.12.2-linux-${arch}.tar.gz \

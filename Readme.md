@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.2 (17.3.2024)
+- Version: 1.3 (10.4.2024)
 - Developed by: Ronald Steffen
 
 ---
@@ -18,6 +18,7 @@ The tools included are:
 - [mathjax-full](https://www.mathjax.org/) 3.2.2
 - [Pagedjs](https://pagedjs.org/) and [pagedjs-cli](https://github.com/pubpub/pagedjs-cli) 0.4.3 (with puppeteer 22.4.1)
 - [WeasyPrint](https://weasyprint.org/) version 57.2
+- [docxToJats](https://github.com/Vitaliy-1/docxToJats)
 - [just](https://github.com/casey/just) 2.0.1 (for task execution)
 
 Template files and other sources (e.g. css) are dereived from:
@@ -30,6 +31,7 @@ Template files and other sources (e.g. css) are dereived from:
 ## Usage
 
 To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained in the [documentation](Documentation.md).
+Please note that the default conversion chain (which hnadles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
 1) Build the conainter image according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`
 2) Run the image in a conatiner with `docker-compose up --detach`
@@ -60,7 +62,7 @@ To get an overview of all options run:
 which will output:
 
 ```text
-Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true ] [ docx=<filename> ] [ <recipe> ]
+Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx=<filename> ] [ <recipe> ]
 
 To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"
 If no docx file is provided the first docx file in the working dirctory will be taken.
@@ -72,19 +74,23 @@ Options:
     validate=true: Runs an XML validation with xmllint.
     develop=true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps.
     docx=<filename>: Specifies the path and name of the docx file to be converted.
+    pagedjs-polyfill=true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose.
 
 Available recipes:
-    all             # run all conversions (default)
-    cleanup-work    # Clean up the working directory removing all files in work and in work/media
-    html            # Convert XML to HTML using Saxon HE 12
-    pagedjs         # Generate PDF using Pagedjs
-    pandoc          # Convert docx to XML with Pandoc
-    pandoc-pdf-html # Generate PDF from HTML using Pandoc
-    pandoc-pdf-xml  # Generate PDF from XML using Pandoc
-    pdf             # Generate PDF using Pandoc, Pagedjs and Weasyprint
-    reset-example   # Clean up the working directory and reset example file
-    weasyprint      # Generate PDF using Weasyprint
-    xml             # Convert docx to XML using Pandoc + Saxon HE 12
+    all                           # run all conversions (default)
+    cleanup-work                  # Clean up the working directory removing all files in work and in work/media
+    docxtojats                    # Generate Jats XML using the docxtojats converter
+    html                          # Convert XML to HTML using Saxon HE 12
+    pagedjs                       # Generate PDF using Pagedjs
+    pandoc                        # Convert docx to XML with Pandoc
+    pandoc-pdf-html               # Generate PDF from HTML using Pandoc
+    pandoc-pdf-xml                # Generate PDF from XML using Pandoc
+    pdf                           # Generate PDF using Pandoc, Pagedjs and Weasyprint
+    reset-example                 # Clean up the working directory and reset example file
+    runtests                      # Run different test scripts
+    weasyprint                    # Generate PDF using Weasyprint
+    xml                           # Convert docx to XML using Pandoc + Saxon HE 12
+    xml-validate filename="false" # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
 ```
 
 The xmlworkflow container supports the definition of custom themes, i.e. different sets of templates, css and media files.
@@ -101,7 +107,14 @@ You could e.g. define a step doing a Markdown to XML conversion with Pandoc to b
 
 To run a set of different tests use:
 
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/utils && . run_test.sh"`
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"`
+
+### How to run a custom conversion chain
+
+To run a custom conversion chain, e.g. not using the default Pandoc docx to Jats XML conversion, you can specifiy your conversion steps directly on the command line. In the following example docx to Jats XML conversion is facilitated by the [docxToJats converter](https://github.com/Vitaliy-1/docxToJats) and the resulting Jats XML file is subsequently passed through the default Jats XML -> HTML -> Weasyprint conversion steps.
+The minus sign at the end of the subsequent recipe names is important in this use case, since it indicates that only the recipe without its default dependecies (which would be Pandoc) should be run.
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx docxtojats html- weasyprint-"`
 
 ## How to develop and debug Print CSS stylesheets
 
@@ -123,7 +136,6 @@ An empty HTML template that loads the development CSS and the Pagedjs polyfill i
 - Implementation of a web app to provide a REST-API to handle [Dar packages](https://github.com/substance/dar)
 - considering pagedjs polyfill vs pagedjs-cli
 - revise handling of resource files between themes
-- add [docxToJats](https://github.com/Vitaliy-1/docxToJats)
 
 ## Known issues
 
@@ -134,6 +146,7 @@ An empty HTML template that loads the development CSS and the Pagedjs polyfill i
 
 1.1 New recipes added
 1.2 Added feature to define theme-specific custom conversion steps
+1.3 Added docxtojats converter, added runtests and xml-validate recipes
 
 ## Disclaimer
 
