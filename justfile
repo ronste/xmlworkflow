@@ -2,7 +2,42 @@
 all: _default pdf
 
 [private]
-@help:
+help topic="help":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  case {{topic}} in
+    'help')
+      just default-help
+      ;;
+
+    'pandoc')
+      just _pandoc-help
+      ;;
+
+    'xml')
+      just _xml-help
+      ;;
+
+    'html')
+      just _html-help
+      ;;
+
+    'pagedjs')
+      just _pagedjs-help
+      ;;
+
+    'weasyprint')
+      just _weasyprint-help
+      ;;
+
+    *)
+      echo 'No help for this recipe available.'
+      ;;
+  esac
+
+
+[private]
+@default-help:
   echo "Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx=<filename> ] [ <recipe> ]"
   echo ""
   echo 'To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"'
@@ -81,6 +116,12 @@ _default:
   echo "Utils path is:        $UTILS_PATH"
   echo "Input file is:        {{docx}}"
 
+_pandoc-help:
+  #!/bin/bash
+  cat << EOF
+  The Pandoc help is under construntion.
+  EOF
+
 # Convert docx to XML with Pandoc
 [no-cd]
 pandoc: _default
@@ -98,6 +139,12 @@ pandoc: _default
     -o "$WORK_PATH/{{docx}}_Pandoc.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
+
+_xml-help:
+  #!/bin/bash
+  cat << EOF
+  The XML help is under construntion.
+  EOF
 
 # debug with:
 # java -p lib/SaxonHE12-4J/saxon-he-12.4.jar --list-modules
@@ -121,9 +168,15 @@ xml-: _default
 # Convert docx to XML using Pandoc + Saxon HE 12
 xml: pandoc xml-
 
+_html-help:
+  #!/bin/bash
+  cat << EOF
+  The HTML help is under construntion.
+  EOF
+
 # Convert XML to HTML using Saxon HE 12
 [no-cd, private]
-html-: _default
+html- filename="buffer.xml": _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -132,13 +185,13 @@ html-: _default
   echo -e "{{hcs}}Converting XML to HTML with Saxon HE 12 ...{{nc}}"
   # run citation conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
     -xsl:"$XSL_PATH/jats-APAcit.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE_cit.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/buffer.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/{{filename}}"
   # run html conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
     -xsl:"$XSL_PATH/jats-html.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.html"
   # add development styles
@@ -208,9 +261,15 @@ pandoc-pdf-xml: _default xml (pandoc-pdf- "XML")
 [private]
 pandoc-pdf-xml-: _default (pandoc-pdf- "XML")
 
+_pagedjs-help:
+  #!/bin/bash
+  cat << EOF
+  The Pagedjs help is under construntion.
+  EOF
+
 # Generate PDF using Pagedjs
 [no-cd, private]
-pagedjs-:
+pagedjs- filename="buffer.html":
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -225,15 +284,21 @@ pagedjs-:
     --style "$WORK_PATH/media/pagedjs.css" \
     {{ if develop == "true" { "--style $DEFAULT_CSS_PATH/develop.css" } else { "" } }} \
     --browserArgs '--no-sandbox' \
-    -i "$WORK_PATH/buffer.html" \
+    -i "$WORK_PATH/{{filename}}" \
     -o "$WORK_PATH/{{docx}}_pagedjs.pdf"
 
 # Generate PDF using Pagedjs
 pagedjs: _default html pagedjs-
 
+_weasyprint-help:
+  #!/bin/bash
+  cat << EOF
+  The Weasyprint help is under construntion.
+  EOF
+
 # Generate PDF using Weasyprint
 [private]
-weasyprint-: _default
+weasyprint- filename="buffer.html": _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -243,15 +308,15 @@ weasyprint-: _default
   echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
   # https://github.com/mathjax/MathJax-demos-node
   # node -r esm needs to be executed in the lib folder; just escape seqeunce does not work 
-  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/buffer.html" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
-  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/buffer.html"
+  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{filename}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{filename}}"
   echo -e "{{hcs}}Converting to PDF with WeasyPrint ...{{nc}}"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/weasyprint.css $WORK_PATH/media/weasyprint.css
   weasyprint {{ if debug == "true" { "-d -v" } else { "" } }} \
     -m print -p \
     -s "$WORK_PATH/media/weasyprint.css" \
     {{ if develop == "true" { "-s $CSS_PATH/develop.css" } else { "" } }} \
-    -p "$WORK_PATH/buffer.html" "$WORK_PATH/{{docx}}_weasyprint.pdf"
+    -p "$WORK_PATH/{{filename}}" "$WORK_PATH/{{docx}}_weasyprint.pdf"
 
 # Generate PDF using Weasyprint
 weasyprint: _default html weasyprint-

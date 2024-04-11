@@ -107,7 +107,7 @@ You could e.g. define a step doing a Markdown to XML conversion with Pandoc to b
 
 To run a set of different tests use:
 
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"`
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
 
 ### How to run a custom conversion chain
 
@@ -115,6 +115,14 @@ To run a custom conversion chain, e.g. not using the default Pandoc docx to Jats
 The minus sign at the end of the subsequent recipe names is important in this use case, since it indicates that only the recipe without its default dependecies (which would be Pandoc) should be run.
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx docxtojats html- weasyprint-"`
+
+### How to run conversion chains not based on docx documents
+
+If you run the recipes `html-`, `pagedjs-` or `weasyprint-` you may pass a filename as additional parameter. This allows to run these conversion steps on an existing xml or html file from a different source than the default docx file. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html- Dummy_Article_Template.docx_SaxonHE.xml weasyprint-"`
+
+Please don't forget to put all dependent files into the media folder.`
 
 ## How to develop and debug Print CSS stylesheets
 
