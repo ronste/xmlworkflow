@@ -1,0 +1,50 @@
+_pandoc-help:
+  #!/bin/bash
+  cat << EOF
+  The Pandoc help is under construntion.
+  EOF
+
+# Convert docx to XML with Pandoc
+[no-cd]
+pandoc: _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{hcs}}Converting docx to XML with Pandoc ...{{nc}}"
+  pandoc {{ if debug == "true" { "--verbose" } else { "" } }} $WORK_PATH/{{docx}} -s \
+    -f docx+styles+citations \
+    --extract-media="." \
+    --metadata-file="$METADATA_PATH/metadata.yaml" \
+    --citeproc \
+    --template "$UTILS_PATH/jats_template.tex" \
+    -t "$UTILS_PATH/custom_jats_writer.lua" \
+    -o "$WORK_PATH/{{docx}}_Pandoc.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
+
+# Generate PDF using Pandoc
+[no-cd, private]
+pandoc-pdf- pandoc_from=pandoc_from: _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{hcs}}Converting {{pandoc_from}} to PDF with Pandoc ...{{nc}}"
+  pandoc "$WORK_PATH/buffer.{{pandoc_from}}" -s \
+      -f {{ if pandoc_from == "html" { "html" } else { "jats" } }} \
+      --pdf-engine=pdflatex \
+      --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
+      --metadata-file="$METADATA_PATH/metadata.yaml" \
+      -t pdf \
+      -o "$WORK_PATH/{{docx}}_Pandoc.pdf"
+
+# Generate PDF from HTML using Pandoc
+pandoc-pdf-html: _default html (pandoc-pdf- pandoc_from)
+
+[private]
+pandoc-pdf-html-: _default (pandoc-pdf- pandoc_from)
+
+# Generate PDF from XML using Pandoc
+pandoc-pdf-xml: _default xml (pandoc-pdf- "XML")
+
+[private]
+pandoc-pdf-xml-: _default (pandoc-pdf- "XML")

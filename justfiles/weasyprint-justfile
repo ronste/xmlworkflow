@@ -1,0 +1,30 @@
+_weasyprint-help:
+  #!/bin/bash
+  cat << EOF
+  The Weasyprint help is under construntion.
+  EOF
+
+# Generate PDF using Weasyprint
+[private]
+weasyprint- filename="buffer.html": _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  # https://doc.courtbouillon.org/weasyprint/stable/first_steps.html
+  # https://weasyprint.org/
+  # http://test.weasyprint.org/suite-css-page-3/chapter4/section1/
+  echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
+  # https://github.com/mathjax/MathJax-demos-node
+  # node -r esm needs to be executed in the lib folder; just escape seqeunce does not work 
+  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{filename}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{filename}}"
+  echo -e "{{hcs}}Converting to PDF with WeasyPrint ...{{nc}}"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/weasyprint.css $WORK_PATH/media/weasyprint.css
+  weasyprint {{ if debug == "true" { "-d -v" } else { "" } }} \
+    -m print -p \
+    -s "$WORK_PATH/media/weasyprint.css" \
+    {{ if develop == "true" { "-s $CSS_PATH/develop.css" } else { "" } }} \
+    -p "$WORK_PATH/{{filename}}" "$WORK_PATH/{{docx}}_weasyprint.pdf"
+
+# Generate PDF using Weasyprint
+weasyprint: _default html weasyprint-

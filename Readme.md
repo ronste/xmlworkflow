@@ -39,21 +39,7 @@ Please note that the default conversion chain (which hnadles metadata from the d
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
 
-This will craete a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
-
-Running the processDocx command without any parameters will start the full chain of conversion from docx -> xml -> html -> pdf, including all versions of PDFs (created with Pandoc, PagedJs and Weasyprint).
-
-However, each of these conversion steps can be selected individually. To only run a conversion from docx to HTML use:
-
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html"`
-
-If the Jats XML file requried to create the HTML output is already present in the working directory you can run the HTML conversion without its prior conversion steps by using:
-
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html-"`
-
-Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`processDocx` command:
-
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx pagedjs weasyprint"`
+This will create a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
 
 To get an overview of all options run:
 
@@ -93,6 +79,24 @@ Available recipes:
     xml-validate filename="false" # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
 ```
 
+### The default (docx-based) conversion chain
+
+Running the processDocx command without any parameters will start the full chain of conversion from docx -> xml -> html -> pdf, including all versions of PDFs (created with Pandoc, PagedJs and Weasyprint).
+
+However, each of these conversion steps can be selected individually. To only run a conversion from docx to HTML use:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html"`
+
+If, due to a previous run, the Jats XML buffer file requried to create the HTML output is already present in the working directory you can run the HTML conversion without its prior conversion steps by using:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html-"`
+
+Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`processDocx` command:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx pagedjs weasyprint"`
+
+### Using custom themes
+
 The xmlworkflow container supports the definition of custom themes, i.e. different sets of templates, css and media files.
 To create a custom theme create a copy of the folder `themes/default` within the themes folder.
 You can then use the theme by providing the option `theme=<folder name>` and customize the templates inside this folder.
@@ -104,10 +108,6 @@ A theme may also contain its own justfile to define custom conversion steps. Not
 If you run the above command you find an additional recipes `custom-help` and `custom-example` were added.
 
 You could e.g. define a step doing a Markdown to XML conversion with Pandoc to build your own Markdown -> Jats XML -> ... conversion chain for one particular theme.
-
-To run a set of different tests use:
-
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
 
 ### How to run a custom conversion chain
 
@@ -124,7 +124,7 @@ If you run the recipes `html-`, `pagedjs-` or `weasyprint-` you may pass a filen
 
 Please don't forget to put all dependent files into the media folder.`
 
-## How to develop and debug Print CSS stylesheets
+## How to develop, debug and test Print CSS stylesheets
 
 To help with developing and debugging Print CSS stylesheets the develop=true option is available. This will add special css to the conversion process that may help you to identify possible issues.
 
@@ -137,6 +137,10 @@ For specifically debugging Pagedjs issues you can add the Pagedjs polyfill to yo
 However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used for the conversion) might behave differently under some circumstances (see below).
 
 An empty HTML template that loads the development CSS and the Pagedjs polyfill is provided with the file `themes\default\templates\html_template_printcss.html`. You can inspect this file with your browser to learn about the basic Print CSS page layout. Note however, that Pagedjs and Weasyprint handle these layout elements differently!
+
+To run a set of different tests use:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
 
 ## Next steps
 

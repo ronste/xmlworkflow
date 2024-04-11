@@ -1,0 +1,27 @@
+_xml-help:
+  #!/bin/bash
+  cat << EOF
+  The XML help is under construntion.
+  EOF
+
+# debug with:
+# java -p lib/SaxonHE12-4J/saxon-he-12.4.jar --list-modules
+# java -verbose:class net.sf.saxon.Transform
+# java classpath separator is ":" on Linux and ";" on Windows !!!
+# Convert docx to XML using Pandoc + Saxon HE 12
+[private]
+xml-: _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{hcs}}XSLT post processing with Saxon HE 12 ...{{nc}}"
+  java -cp "{{javaClassPath}}" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
+    -xsl:"$UTILS_PATH/pandoc_post_process.xsl" \
+    -o:"$WORK_PATH/{{docx}}_SaxonHE.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/buffer.xml"
+  if [ "{{ validate }}" = "true" ]; then \
+    just xml-validate "$WORK_PATH/{{docx}}_SaxonHE.xml"; \
+  fi
+# Convert docx to XML using Pandoc + Saxon HE 12
+xml: pandoc xml-

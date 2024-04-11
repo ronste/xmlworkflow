@@ -1,0 +1,20 @@
+# run for all recipies
+_default:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  # set all dynamic environment variables (others will be set via .env file)
+  sed -i '/^export TEMPLATE_PATH=/d' ~/.bashrc
+  sed -i '/^export XSL_PATH=/d' ~/.bashrc
+  sed -i '/^export CSS_PATH=/d' ~/.bashrc
+  sed -i '/^export RES_PATH=/d' ~/.bashrc
+  echo 'export TEMPLATE_PATH="$THEME_PATH/{{theme}}/templates"' >> ~/.bashrc
+  echo 'export XSL_PATH="$THEME_PATH/{{theme}}/xsl"'  >> ~/.bashrc
+  echo 'export CSS_PATH="$THEME_PATH/{{theme}}/css"'  >> ~/.bashrc
+  echo 'export RES_PATH="$THEME_PATH/{{theme}}/res"'  >> ~/.bashrc
+  # Apply the changes
+  source ~/.bashrc
+  # print user info
+  echo "Working directory is: $WORK_PATH"
+  echo "Theme path is:        $THEME_PATH/{{theme}}"
+  echo "Utils path is:        $UTILS_PATH"
+  echo "Input file is:        {{docx}}"

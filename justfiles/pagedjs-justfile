@@ -1,0 +1,28 @@
+_pagedjs-help:
+  #!/bin/bash
+  cat << EOF
+  The Pagedjs help is under construntion.
+  EOF
+
+# Generate PDF using Pagedjs
+[no-cd, private]
+pagedjs- filename="buffer.html":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{hcs}}Converting to PDF with paged.js ...{{nc}}"
+  # https://www.npmjs.com/package/pagedjs-cli
+  # https://pagedjs.org/documentation/ 
+  # https://gitlab.coko.foundation/pagedjs/pagedjs-cli
+  # !!! pagedjs-cli fails with --debug option !!! a browser is required
+  # !!! pagedjs-cli produces different results as compared to pagedjs polyfill !!!
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/pagedjs.css $WORK_PATH/media/pagedjs.css
+  pagedjs-cli {{ if debug == "true" { "--warn" } else { "" } }} \
+    --style "$WORK_PATH/media/pagedjs.css" \
+    {{ if develop == "true" { "--style $DEFAULT_CSS_PATH/develop.css" } else { "" } }} \
+    --browserArgs '--no-sandbox' \
+    -i "$WORK_PATH/{{filename}}" \
+    -o "$WORK_PATH/{{docx}}_pagedjs.pdf"
+
+# Generate PDF using Pagedjs
+pagedjs: _default html pagedjs-

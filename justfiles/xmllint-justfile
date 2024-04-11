@@ -1,0 +1,15 @@
+#Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+xml-validate filename="false":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  if [ "{{ filename }}" != "false" ]; then \
+    echo -e "{{hcs}}Validating XML with xmllint ...{{nc}}"; \
+    xmllint {{filename}} --noout --dtdvalid; \
+      if [ $? -eq 0 ]; then \
+        echo -e "{{hcs}}Validation successfull{{nc}}"; \
+      else \
+        echo -e "{{wcs}}XML-document is not valid!{{nc}}"; \
+      fi \
+  else \
+    echo -e "{{wcs}}Please provide a filename to validate!{{nc}}"; \
+  fi
