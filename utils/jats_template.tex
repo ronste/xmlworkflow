@@ -217,6 +217,7 @@ $abstract$
 $endif$
 $if(tags)$
 <kwd-group kwd-group-type="author">
+<label>$kwd-label$</label>
 $for(tags)$
 <kwd>$tags$</kwd>
 $endfor$
@@ -230,8 +231,9 @@ $endif$
 $if(citation_suggestion)$
 <custom-meta-group>
 <custom-meta>
-<meta-name>citation-suggestion</meta-name>
-<meta-value><named-content content-type="citation-suggestion">$citation_suggestion$</named-content></meta-value>
+<meta-name>citation_suggestion</meta-name>
+<meta-label>$citationSuggestionLabel$</meta-label>
+<meta-value><named-content content-type="citation_suggestion">$citation_suggestion$</named-content></meta-value>
 </custom-meta>
 </custom-meta-group>
 $endif$

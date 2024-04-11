@@ -334,35 +334,36 @@ or pipeline) parameterized.
       </div>
     </section>
 
-    <section id="article-metadata">
+    <section id="article-metadata" class="part-rule-bottom">
       <!-- change context to front/article-meta (again) -->
       <xsl:for-each select="article-meta | self::front-stub">
-        <div class="metadata centered">
-          <xsl:apply-templates mode="metadata" select="title-group" />
-        </div>
 
-        <!-- contrib-group, aff, aff-alternatives, author-notes -->
-        <div id="contrib_group_meta" class="metadata">
-          <xsl:apply-templates mode="metadata" select="contrib-group" />
-          <!-- back in article-meta or front-stub context -->
-          <xsl:if test="aff | aff-alternatives | author-notes">
+        <div id="contributer-metadata" class="part-rule-bottom">
+          <div class="metadata centered">
+            <xsl:apply-templates mode="metadata" select="title-group" />
+          </div>
 
-            <div class="row">
-              <div class="cell empty" />
-              <div class="cell">
-                <div class="metadata-group contrib_group">
-                  <xsl:apply-templates mode="metadata"
-                    select="aff | aff-alternatives | author-notes" />
+          <!-- contrib-group, aff, aff-alternatives, author-notes -->
+          <div id="contrib_group_meta" class="metadata">
+            <xsl:apply-templates mode="metadata" select="contrib-group" />
+            <!-- back in article-meta or front-stub context -->
+            <xsl:if test="aff | aff-alternatives | author-notes">
+
+              <div class="row">
+                <div class="cell empty" />
+                <div class="cell">
+                  <div class="metadata-group contrib_group">
+                    <xsl:apply-templates mode="metadata"
+                      select="aff | aff-alternatives | author-notes" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-          </xsl:if>
+            </xsl:if>
+          </div>
         </div>
 
-        <hr class="part-rule" />
-
-        <div id="article-metadata" style="display: flex;">
+        <div id="journal-metadata" class="part-rule-bottom" style="display: flex;">
           <div style="display: inline-block; width: 50%">
             <xsl:apply-templates select="//history/date" mode="metadata"></xsl:apply-templates>
             <xsl:apply-templates select="//pub-date" mode="metadata"></xsl:apply-templates>
@@ -382,13 +383,11 @@ or pipeline) parameterized.
           </div>
         </div>
 
-        <hr class="part-rule" />
-
         <!-- abstract(s) -->
         <xsl:if test="abstract | trans-abstract">
           <xsl:for-each select="abstract | trans-abstract">
             <!-- title in left column, content (paras, secs) in right -->
-            <div class="metadata">
+            <div id="abstract" class="metadata">
               <h4 class="callout-title">
                 <xsl:apply-templates select="title/node()" />
                 <xsl:if test="not(normalize-space(string(title)))">
@@ -407,41 +406,41 @@ or pipeline) parameterized.
         </xsl:if>
         <!-- keywords -->
         <xsl:if test="kwd-group">
-          <div id="keyword_group_meta" class="metadata">
-            <h7 class="callout-title normal">
-              <span class="generated">Schlagwörter: </span>
-            </h7>
-            <xsl:for-each select=".//kwd">
-              <span class="generated">
-                <xsl:value-of select="." />
-                <xsl:if test="not(position()=last())">, </xsl:if>
-              </span>
-            </xsl:for-each>
-          </div>
+          <xsl:apply-templates select="kwd-group" mode="metadata-inline">
+          </xsl:apply-templates>
         </xsl:if>
         <!-- custom meta -->
-        <div id="custom_group_meta" class="metadata">
-          <h7 class="callout-title normal">
-            <span class="generated">Zitiervorschlag: </span>
-          </h7>
-          <span class="generated">
-            <xsl:apply-templates select="//custom-meta/meta-value"></xsl:apply-templates>
-          </span>
-        </div>
+        <xsl:if test="custom-meta-group">
+          <xsl:apply-templates select="custom-meta-group" mode="metadata-inline">
+          </xsl:apply-templates>
+        </xsl:if>
         <!-- end of dealing with abstracts -->
       </xsl:for-each>
 
       <xsl:for-each select="notes">
-        <div class="metadata">
+        <div id="notes" class="metadata">
           <xsl:apply-templates mode="metadata" select="." />
         </div>
       </xsl:for-each>
 
-      <hr class="part-rule" />
-
     </section>
 
     <!-- end of big front-matter pull -->
+  </xsl:template>
+
+  <xsl:template match="kwd-group | custom-meta" mode="metadata-inline">
+    <div id="{concat(name(), '_meta')}" class="metadata">
+      <h7 class="callout-title normal">
+        <span class="generated"><xsl:value-of select="label | meta-label"></xsl:value-of></span>
+        <span class="generated">:</span>
+      </h7>
+      <xsl:for-each select=".//kwd | meta-value">
+        <span class="generated">
+          <xsl:value-of select="." />
+          <xsl:if test="not(position()=last())">, </xsl:if>
+        </span>
+      </xsl:for-each>
+    </div>
   </xsl:template>
 
   <xsl:template name="footer-metadata">
@@ -1886,7 +1885,7 @@ or pipeline) parameterized.
 
 
   <xsl:template match="ref-list" name="ref-list">
-    <div class="section ref-list">
+    <div id="ref-list" class="section ref-list">
       <xsl:call-template name="named-anchor" />
       <xsl:apply-templates select="." mode="label" />
       <xsl:apply-templates select="*[not(self::ref | self::ref-list)]" />
@@ -3049,7 +3048,10 @@ or pipeline) parameterized.
       <xsl:apply-templates />
     </xsl:param>
     <div class="back-section">
-      <xsl:call-template name="named-anchor" />
+      <xsl:attribute name="id">
+        <xsl:value-of select="$generated-title" />
+      </xsl:attribute>
+      <!-- <xsl:call-template name="named-anchor" /> -->
       <xsl:if test="not(title) and $generated-title">
         <xsl:choose>
           <!-- The level of title depends on whether the back matter itself

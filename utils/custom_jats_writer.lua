@@ -20,7 +20,8 @@ function Writer (doc, opts)
                     processStyles['keywords'],
                     processStyles['subject'], -- equals sections in OJS
                     processStyles['table-turn-right'],
-                    processStyles['table-turn-left']
+                    processStyles['table-turn-left'],
+                    processStyles['citation_suggestion']
                 })
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
@@ -121,6 +122,11 @@ function Writer (doc, opts)
                     end
                     -- keywords
                     if (div.attr.attributes['custom-style'] == processStyles['keywords']) then
+                        if (doc.meta.keywordsLabel == nil) then
+                            doc.meta['kwd-label'] = div.attr.attributes['custom-style']
+                        else
+                            doc.meta['kwd-label'] = pandoc.utils.stringify(doc.meta.keywordsLabel)
+                        end
                         if (pandoc.utils.stringify(div.content[1].content[1]) ~= processStyles['keywords']) then
                             -- split keyword(tag) string at ',' or ';' and remove trailing and leading spaces
                             tags = {}
@@ -131,6 +137,15 @@ function Writer (doc, opts)
                             end
                             doc.meta.tags = pandoc.List(tags)
                         end
+                    end
+                    -- citation suggestion
+                    if (div.attr.attributes['custom-style'] == processStyles['citation_suggestion']) then
+                        if (doc.meta.citationSuggestionLabel == nil) then
+                            doc.meta['citation_suggestion-label'] = div.attr.attributes['custom-style']
+                        else
+                            doc.meta['citation_suggestion-label'] = pandoc.utils.stringify(doc.meta.citationSuggestionLabel)
+                        end
+                        doc.meta['citation_suggestion'] = "TO BE IMPLEMENTED ON REQUEST"
                     end
                     -- handle table rotation styles
                     if (div.attr.attributes['custom-style'] == processStyles['table-turn-right']) then
