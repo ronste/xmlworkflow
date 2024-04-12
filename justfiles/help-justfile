@@ -27,6 +27,10 @@ help topic="help":
       just _weasyprint-help
       ;;
 
+    'mathjax')
+      just _mathjax-help
+      ;;
+
     *)
       echo 'No help for this recipe available.'
       ;;

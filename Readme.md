@@ -67,6 +67,7 @@ Available recipes:
     cleanup-work                  # Clean up the working directory removing all files in work and in work/media
     docxtojats                    # Generate Jats XML using the docxtojats converter
     html                          # Convert XML to HTML using Saxon HE 12
+    mathjax                       # Generate PDF using mathjax
     pagedjs                       # Generate PDF using Pagedjs
     pandoc                        # Convert docx to XML with Pandoc
     pandoc-pdf-html               # Generate PDF from HTML using Pandoc
@@ -78,6 +79,10 @@ Available recipes:
     xml                           # Convert docx to XML using Pandoc + Saxon HE 12
     xml-validate filename="false" # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
 ```
+
+More information on individual conversion steps may be available by running:
+
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx help <recipe-name>`
 
 ### The default (docx-based) conversion chain
 
@@ -118,7 +123,7 @@ The minus sign at the end of the subsequent recipe names is important in this us
 
 ### How to run conversion chains not based on docx documents
 
-If you run the recipes `html-`, `pagedjs-` or `weasyprint-` you may pass a filename as additional parameter. This allows to run these conversion steps on an existing xml or html file from a different source than the default docx file. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
+If you run the recipes `xml-`, `html-`, `pagedjs-` or `weasyprint-` you may pass a filename as additional parameter. This allows to run these conversion steps on an existing xml or html file from a different source than the default docx file. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html- Dummy_Article_Template.docx_SaxonHE.xml weasyprint-"`
 

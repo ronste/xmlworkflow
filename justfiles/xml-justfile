@@ -1,27 +1,34 @@
 _xml-help:
   #!/bin/bash
   cat << EOF
-  The XML help is under construntion.
+  This conversion step uses SaxonHE to perform a XSL transformation on a XML file. By default it uses the file "pandoc_post_process.xsl" to perform a post precessing step on a prior Pandoc docx -> Jats XML conversion. However, you can provide a path to an XML file and a path to an XSL file in the form 
+
+  processDocx xml- <path-to-xml> <path-to-xsl>
+
+  to perform custom XSL transformations.
+
+  Debug hints:
+  # java classpath separator is ":" on Linux and ";" on Windows !!!
+  # java -p lib/SaxonHE12-4J/saxon-he-12.4.jar --list-modules
+  # java -verbose:class net.sf.saxon.Transform
   EOF
 
-# debug with:
-# java -p lib/SaxonHE12-4J/saxon-he-12.4.jar --list-modules
-# java -verbose:class net.sf.saxon.Transform
-# java classpath separator is ":" on Linux and ";" on Windows !!!
 # Convert docx to XML using Pandoc + Saxon HE 12
 [private]
-xml-: _default
+xml- filename="buffer.xml" xsl-file="pandoc_post_process.xsl": _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
-  echo -e "{{hcs}}XSLT post processing with Saxon HE 12 ...{{nc}}"
+  echo -e "{{hcs}}XSLT processing with Saxon HE 12 ...{{nc}}"
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/buffer.xml" \
-    -xsl:"$UTILS_PATH/pandoc_post_process.xsl" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
+    -xsl:"$UTILS_PATH/{{xsl-file}}" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/buffer.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/{{filename}}"
   if [ "{{ validate }}" = "true" ]; then \
     just xml-validate "$WORK_PATH/{{docx}}_SaxonHE.xml"; \
   fi
+  echo "Elapsed Time: $SECONDS seconds"
+
 # Convert docx to XML using Pandoc + Saxon HE 12
 xml: pandoc xml-

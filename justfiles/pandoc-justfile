@@ -1,7 +1,14 @@
 _pandoc-help:
   #!/bin/bash
   cat << EOF
-  The Pandoc help is under construntion.
+  This conversion step uses Pandoc (version `pandoc --version | grep -Po "\d+\.\d+\.\d+\.\d+"`) to perform a docx -> XML conversion step.
+
+  It uses the Pandoc extensions docx, styles and citations, the metadata.yaml file located in the metadata subfolder of the current working directory and a basic jats_template.tex template derived from the default Pandoc Jats template.
+  It also applies a custom lua writer to extract author metadata from the docx document.
+
+  Relevant links:
+  https://pandoc.org/
+
   EOF
 
 # Convert docx to XML with Pandoc
@@ -21,6 +28,7 @@ pandoc: _default
     -o "$WORK_PATH/{{docx}}_Pandoc.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.xml"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
+  echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF using Pandoc
 [no-cd, private]
@@ -30,12 +38,13 @@ pandoc-pdf- pandoc_from=pandoc_from: _default
   source ~/.bashrc
   echo -e "{{hcs}}Converting {{pandoc_from}} to PDF with Pandoc ...{{nc}}"
   pandoc "$WORK_PATH/buffer.{{pandoc_from}}" -s \
-      -f {{ if pandoc_from == "html" { "html" } else { "jats" } }} \
-      --pdf-engine=pdflatex \
-      --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
-      --metadata-file="$METADATA_PATH/metadata.yaml" \
-      -t pdf \
-      -o "$WORK_PATH/{{docx}}_Pandoc.pdf"
+    -f {{ if pandoc_from == "html" { "html" } else { "jats" } }} \
+    --pdf-engine=pdflatex \
+    --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
+    --metadata-file="$METADATA_PATH/metadata.yaml" \
+    -t pdf \
+    -o "$WORK_PATH/{{docx}}_Pandoc.pdf"
+  echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF from HTML using Pandoc
 pandoc-pdf-html: _default html (pandoc-pdf- pandoc_from)

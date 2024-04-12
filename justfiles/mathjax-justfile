@@ -1,0 +1,26 @@
+_mathjax-help:
+  #!/bin/bash
+  cat << EOF
+  This conversion step uses Mathjax on a HTML file to convert MathML formulas into CHTML.
+
+  Relevant links:
+  https://www.mathjax.org/
+  https://github.com/mathjax/MathJax-demos-node
+
+  Known issues:
+  - node -r esm needs to be executed in the lib folder; just escape seqeunce does not work 
+  EOF
+
+# Convert Mathl to CHTML using mathjax
+[private]
+mathjax- filename="buffer.html": _default
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
+  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{filename}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{filename}}"
+  echo "Elapsed Time: $SECONDS seconds"
+
+# Convert Mathl to CHTML using mathjax
+mathjax: _default html mathjax-

@@ -1,7 +1,11 @@
 _html-help:
   #!/bin/bash
   cat << EOF
-  The HTML help is under construntion.
+  This conversion step uses Saxon HE 12 to perform a Jats XML -> HTML conversion. It uses the "jats_html.css" file of the currently selected theme.
+
+  Conversion in performed in to steps:
+  1) Citation conversion using "jats-APAcit.xsl" from the currently selected theme.
+  2) Document conversion using "jats-html.xsl" from the currently selected theme.
   EOF
 
 # Convert XML to HTML using Saxon HE 12
@@ -53,6 +57,7 @@ html- filename="buffer.xml": _default
     fi \
   fi
   set -e
+  echo "Elapsed Time: $SECONDS seconds"
 
 # Convert XML to HTML using Saxon HE 12
 html: _default xml html-

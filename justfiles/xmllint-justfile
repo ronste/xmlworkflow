@@ -1,4 +1,5 @@
 #Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+[no-cd]
 xml-validate filename="false":
   #!/usr/bin/env bash
   set -euo pipefail
@@ -13,3 +14,4 @@ xml-validate filename="false":
   else \
     echo -e "{{wcs}}Please provide a filename to validate!{{nc}}"; \
   fi
+  echo "Elapsed Time: $SECONDS seconds"
