@@ -31,7 +31,7 @@ Template files and other sources (e.g. css) are dereived from:
 ## Usage
 
 To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained in the [documentation](Documentation.md).
-Please note that the default conversion chain (which hnadles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
+Please note that the default conversion chain (which handles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
 1) Build the conainter image according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`
 2) Run the image in a conatiner with `docker-compose up --detach`
@@ -67,7 +67,7 @@ Available recipes:
     cleanup-work                  # Clean up the working directory removing all files in work and in work/media
     docxtojats                    # Generate Jats XML using the docxtojats converter
     html                          # Convert XML to HTML using Saxon HE 12
-    mathjax                       # Generate PDF using mathjax
+    mathjax                       # Convert Mathl to CHTML using mathjax
     pagedjs                       # Generate PDF using Pagedjs
     pandoc                        # Convert docx to XML with Pandoc
     pandoc-pdf-html               # Generate PDF from HTML using Pandoc
@@ -110,7 +110,7 @@ A theme may also contain its own justfile to define custom conversion steps. Not
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx -f /root/xmlworkflow/themes/default/justfile help"`
 
-If you run the above command you find an additional recipes `custom-help` and `custom-example` were added.
+If you run the above command you find the additional recipes `custom-help` and `custom-example` were added.
 
 You could e.g. define a step doing a Markdown to XML conversion with Pandoc to build your own Markdown -> Jats XML -> ... conversion chain for one particular theme.
 
@@ -127,7 +127,7 @@ If you run the recipes `xml-`, `html-`, `pagedjs-` or `weasyprint-` you may pass
 
 `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html- Dummy_Article_Template.docx_SaxonHE.xml weasyprint-"`
 
-Please don't forget to put all dependent files into the media folder.`
+Please don't forget to put all dependent files into the media folder.
 
 ## How to develop, debug and test Print CSS stylesheets
 
@@ -157,13 +157,12 @@ To run a set of different tests use:
 ## Known issues
 
 - As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work with Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
-- Rendering of large tables works well with Pagedjs polyfill but has issues with pagedjs-cli: page width is not considered.
 
 ## Version history
 
 1.1 New recipes added
 1.2 Added feature to define theme-specific custom conversion steps
-1.3 Added docxtojats converter, added runtests and xml-validate recipes
+1.3 Added docxtojats converter, added mathjay, runtests and xml-validate recipes
 
 ## Disclaimer
 
