@@ -8,4 +8,7 @@ processDocx pandoc-pdf-xml-
 processDocx theme=berlinup validate=true reset-example html
 processDocx -f /root/xmlworkflow/themes/berlinup/justfile debug=true custom-example
 processDocx docxtojats
-processDocx xml-validate /root/xmlworkflow/work/buffer.xml
+processDocx xml-file='/root/xmlworkflow/work/buffer.xml' xml-validate
+processDocx reset-example
+processDocx
+processDocx xml-file=buffer.xml html-

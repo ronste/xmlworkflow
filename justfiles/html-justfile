@@ -10,7 +10,7 @@ _html-help:
 
 # Convert XML to HTML using Saxon HE 12
 [no-cd, private]
-html- filename="buffer.xml": _default
+html-: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -19,13 +19,13 @@ html- filename="buffer.xml": _default
   echo -e "{{hcs}}Converting XML to HTML with Saxon HE 12 ...{{nc}}"
   # run citation conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{xml-file}}" \
     -xsl:"$XSL_PATH/jats-APAcit.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE_cit.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/{{filename}}"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/{{buffer-xml-file}}"
   # run html conversion
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{buffer-xml-file}}" \
     -xsl:"$XSL_PATH/jats-html.xsl" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.html"
   # add development styles
@@ -36,7 +36,7 @@ html- filename="buffer.xml": _default
     echo -e "TODO: start development server"; \
   fi
   # copy to buffer
-  cp "$WORK_PATH/{{docx}}_SaxonHE.html" "$WORK_PATH/buffer.html"
+  cp "$WORK_PATH/{{docx}}_SaxonHE.html" "$WORK_PATH/{{buffer-html-file}}"
   # add pagedjs polyfill to output file only
   if [ "{{ pagedjs-polyfill }}" = "true" ]; then \
     echo -e "{{wcs}}Adding pagedjs polyfill ...{{nc}}"; \

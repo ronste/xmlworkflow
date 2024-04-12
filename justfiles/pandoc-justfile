@@ -26,7 +26,7 @@ pandoc: _default
     --template "$UTILS_PATH/jats_template.tex" \
     -t "$UTILS_PATH/custom_jats_writer.lua" \
     -o "$WORK_PATH/{{docx}}_Pandoc.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/buffer.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/{{buffer-xml-file}}"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
   echo "Elapsed Time: $SECONDS seconds"
 

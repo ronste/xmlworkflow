@@ -11,7 +11,7 @@ _weasyprint-help:
 
 # Generate PDF using Weasyprint
 [private]
-weasyprint- filename="buffer.html": _default
+weasyprint-: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -21,7 +21,7 @@ weasyprint- filename="buffer.html": _default
     -m print -p \
     -s "$WORK_PATH/media/weasyprint.css" \
     {{ if develop == "true" { "-s $CSS_PATH/develop.css" } else { "" } }} \
-    -p "$WORK_PATH/{{filename}}" "$WORK_PATH/{{docx}}_weasyprint.pdf"
+    -p "$WORK_PATH/{{html-file}}" "$WORK_PATH/{{docx}}_weasyprint.pdf"
   echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF using Weasyprint

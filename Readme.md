@@ -48,36 +48,36 @@ To get an overview of all options run:
 which will output:
 
 ```text
-Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx=<filename> ] [ <recipe> ]
+Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx | xml-file | html-file =<filename> ] [ <recipe> ]
 
 To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"
 If no docx file is provided the first docx file in the working dirctory will be taken.
 If no recipe is provided the full conversion chain is run and all available versions of PDFs will be created.
 
 Options:
-    theme=<theme>: Selects a set of templates (i.e. a sub folder of the themes folder) to be used for conversion.
-    debug=true: Enables the debug options of the different tools.
-    validate=true: Runs an XML validation with xmllint.
-    develop=true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps.
-    docx=<filename>: Specifies the path and name of the docx file to be converted.
-    pagedjs-polyfill=true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose.
+    theme = <theme>: Selects a set of templates (i.e. a sub folder of the themes folder) to be used for conversion.
+    debug = true: Enables the debug options of the different tools.
+    validate = true: Runs an XML validation with xmllint.
+    develop = true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps.
+    docx | xml-file | html-file = <filename>: Specifies the path and name of the docx, xml or html source file to be converted.  
+    pagedjs-polyfill = true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose.
 
 Available recipes:
-    all                           # run all conversions (default)
-    cleanup-work                  # Clean up the working directory removing all files in work and in work/media
-    docxtojats                    # Generate Jats XML using the docxtojats converter
-    html                          # Convert XML to HTML using Saxon HE 12
-    mathjax                       # Convert Mathl to CHTML using mathjax
-    pagedjs                       # Generate PDF using Pagedjs
-    pandoc                        # Convert docx to XML with Pandoc
-    pandoc-pdf-html               # Generate PDF from HTML using Pandoc
-    pandoc-pdf-xml                # Generate PDF from XML using Pandoc
-    pdf                           # Generate PDF using Pandoc, Pagedjs and Weasyprint
-    reset-example                 # Clean up the working directory and reset example file
-    runtests                      # Run different test scripts
-    weasyprint                    # Generate PDF using Weasyprint
-    xml                           # Convert docx to XML using Pandoc + Saxon HE 12
-    xml-validate filename="false" # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+    all             # run all conversions (default)
+    cleanup-work    # Clean up the working directory removing all files in work and in work/media
+    docxtojats      # Generate Jats XML using the docxtojats converter
+    html            # Convert XML to HTML using Saxon HE 12
+    mathjax         # Convert Mathl to CHTML using mathjax
+    pagedjs         # Generate PDF using Pagedjs
+    pandoc          # Convert docx to XML with Pandoc
+    pandoc-pdf-html # Generate PDF from HTML using Pandoc
+    pandoc-pdf-xml  # Generate PDF from XML using Pandoc
+    pdf             # Generate PDF using Pandoc, Pagedjs and Weasyprint
+    reset-example   # Clean up the working directory and reset example file
+    runtests        # Run different test scripts
+    weasyprint      # Generate PDF using Weasyprint
+    xml             # Convert docx to XML using Pandoc + Saxon HE 12
+    xml-validate    # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
 ```
 
 More information on individual conversion steps may be available by running:
@@ -123,9 +123,9 @@ The minus sign at the end of the subsequent recipe names is important in this us
 
 ### How to run conversion chains not based on docx documents
 
-If you run the recipes `xml-`, `html-`, `pagedjs-` or `weasyprint-` you may pass a filename as additional parameter. This allows to run these conversion steps on an existing xml or html file from a different source than the default docx file. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
+By specifying a XML or HTML input file on the command line you can inject your own source file into a custom conversion chain. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
 
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx html- Dummy_Article_Template.docx_SaxonHE.xml weasyprint-"`
+`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx xml-file='Dummy_Article_Template.docx_SaxonHE.xml' html- weasyprint-"`
 
 Please don't forget to put all dependent files into the media folder.
 
@@ -136,7 +136,7 @@ To help with developing and debugging Print CSS stylesheets the develop=true opt
 The applied CSS, e.g., will color backgrounds for the html and body tags and add borders to the Print CSS page margin boxes. You can see these in the Pdf files and with the Pagedjs polyfill option.
 
 You can also view the HTML file in print mode in Firefox. To do so open the developer tools and go to the Inspector tab. In the upper right corner of the styles section enable the icon "Toggle print media simulation for the page".
-This will show the HTML file with all @media print styles enabled and you can inspect any issues interactively without added development CSS.
+This will show the HTML file with all @media print styles enabled (but without pagination) and you can inspect any issues interactively.
 
 For specifically debugging Pagedjs issues you can add the Pagedjs polyfill to you HTML file by using the option `pagedjs-polyfill=true`.
 However, please not that the Pagedjs polyfill and pagedjs-cli (as currently used for the conversion) might behave differently under some circumstances (see below).

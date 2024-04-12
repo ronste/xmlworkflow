@@ -13,13 +13,13 @@ _mathjax-help:
 
 # Convert Mathl to CHTML using mathjax
 [private]
-mathjax- filename="buffer.html": _default
+mathjax-: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
   echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
-  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{filename}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
-  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{filename}}"
+  docx_file="{{docx}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{html-file}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  cp "$WORK_PATH/{{docx}}_mathjax.html" "$WORK_PATH/{{buffer-html-file}}"
   echo "Elapsed Time: $SECONDS seconds"
 
 # Convert Mathl to CHTML using mathjax

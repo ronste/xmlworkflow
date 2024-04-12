@@ -15,7 +15,7 @@ _pagedjs-help:
 
 # Generate PDF using Pagedjs
 [no-cd, private]
-pagedjs- filename="buffer.html":
+pagedjs-:
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -25,7 +25,7 @@ pagedjs- filename="buffer.html":
     --style "$WORK_PATH/media/pagedjs.css" \
     {{ if develop == "true" { "--style $DEFAULT_CSS_PATH/develop.css" } else { "" } }} \
     --browserArgs '--no-sandbox' \
-    -i "$WORK_PATH/{{filename}}" \
+    -i "$WORK_PATH/{{html-file}}" \
     -o "$WORK_PATH/{{docx}}_pagedjs.pdf"
   echo "Elapsed Time: $SECONDS seconds"
 

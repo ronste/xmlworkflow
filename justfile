@@ -27,6 +27,11 @@ alias weasy := weasyprint
 # command line parameters
 theme := 'default'
 docx := '$(basename "$(find $WORK_PATH -type f -name "*.docx" | head -n 1)")'
+xml-file := 'buffer.xml'
+buffer-xml-file := 'buffer.xml'
+html-file := 'buffer.html'
+buffer-html-file := 'buffer.html'
+xsl-file := 'pandoc_post_process.xsl'
 debug := 'false'
 validate := 'false'
 develop := 'false'
@@ -62,7 +67,7 @@ pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
 
 [no-cd]
 @_cleanup-tmp:
-  -rm $WORK_PATH/buffer.xml $WORK_PATH/buffer.html 2> /dev/null
+  -rm $WORK_PATH/{{buffer-xml-file}} $WORK_PATH/{{buffer-html-file}} 2> /dev/null
 
 # Clean up the working directory removing all files in work and in work/media
 [no-cd]

@@ -57,6 +57,7 @@ hr.part-rule {
   padding: 5px;
   text-transform: uppercase;
   color: white;
+  margin-top: 0.5em;
 }
 
 .normal {
@@ -304,8 +305,6 @@ h5 {
   margin-right: 1em;
   font-size: 140%
 }
-
-
 
 div.section,
 div.back-section {

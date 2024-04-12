@@ -15,18 +15,18 @@ _xml-help:
 
 # Convert docx to XML using Pandoc + Saxon HE 12
 [private]
-xml- filename="buffer.xml" xsl-file="pandoc_post_process.xsl": _default
+xml-: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
   echo -e "{{hcs}}XSLT processing with Saxon HE 12 ...{{nc}}"
   java -cp "{{javaClassPath}}" \
-    net.sf.saxon.Transform -s:"$WORK_PATH/{{filename}}" \
+    net.sf.saxon.Transform -s:"$WORK_PATH/{{xml-file}}" \
     -xsl:"$UTILS_PATH/{{xsl-file}}" \
     -o:"$WORK_PATH/{{docx}}_SaxonHE.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/{{filename}}"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE.xml" "$WORK_PATH/{{buffer-xml-file}}"
   if [ "{{ validate }}" = "true" ]; then \
-    just xml-validate "$WORK_PATH/{{docx}}_SaxonHE.xml"; \
+    just xml-file="$WORK_PATH/{{docx}}_SaxonHE.xml" xml-validate; \
   fi
   echo "Elapsed Time: $SECONDS seconds"
 
