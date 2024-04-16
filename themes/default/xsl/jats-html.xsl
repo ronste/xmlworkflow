@@ -431,7 +431,7 @@ or pipeline) parameterized.
   <xsl:template match="kwd-group | custom-meta" mode="metadata-inline">
     <div id="{concat(name(), '_meta')}" class="metadata">
       <h7 class="callout-title normal">
-        <span class="generated"><xsl:value-of select="label | meta-label"></xsl:value-of></span>
+        <span class="generated"><xsl:value-of select="label | @specific-use"></xsl:value-of></span>
         <span class="generated">:</span>
       </h7>
       <xsl:for-each select=".//kwd | meta-value">

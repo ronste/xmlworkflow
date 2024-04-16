@@ -41,7 +41,8 @@ article:
     corresp:
       - id: 1
         email: corrsep@email.de
-    
+  volume: 0
+  issue: 0
 journal:
   publisher-id: berlinup
   publisher-name: Berlin Universities Publishing
@@ -49,8 +50,6 @@ journal:
   title: Zeitschrift für Testologie
   eissn: 0000-1111
   pissn: 1544-9173
-  volume: 0
-  issue: 0
 history:
   - event: received
     day: 1

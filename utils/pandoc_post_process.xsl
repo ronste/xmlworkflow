@@ -20,6 +20,26 @@
         </xsl:copy>
     </xsl:template>
     
+    <!-- handle figures -->
+    <!-- combine table caption, label and content into fig !!! This should actually be handled by Pandoc !!! -->
+    <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure ')]">
+        <xsl:variable name="fig_id" select="replace(substring-before(@specific-use, '#'),' ','-')"/>
+        <fig id="{$fig_id}" position="float" orientation="portrait">
+            <label><xsl:value-of select="substring-after(@specific-use, '#')"/></label>
+            <caption>
+                <p><xsl:value-of select="following-sibling::boxed-text[@specific-use='figure']"/></p>
+            </caption>
+            <xsl:apply-templates select="*|node()">
+                <xsl:sort select="position()"
+                    data-type="number" order="descending"/>
+            </xsl:apply-templates>
+        </fig>
+    </xsl:template>
+
+    <!-- Skip //boxed-text[@specific-use="figure"] to prevent duplication, this is handled in //boxed-text[starts-with(@specific-use, 'figure')] -->
+    <xsl:template match="//boxed-text[@specific-use='figure']"/>
+
+    <!-- STILL REQUIRED ???
     <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure') and ./p]">
         <xsl:variable name="fig_id" select="replace(@specific-use,' ','-')"/>
         <fig id="{$fig_id}" position="float" orientation="portrait">
@@ -31,46 +51,31 @@
     </xsl:template>
     
     <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure')]/p">
-        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, ':')"/></label>
+        <xsl:attribute name="id"><xsl:value-of select="substring-before(./parent::node()/@specific-use, '#')"/></xsl:attribute>
+        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, '#')"/></label>
         <caption>
             <p><xsl:apply-templates select="@*|node()"/></p>
         </caption>
-    </xsl:template>
+    </xsl:template> -->
     
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'table') and parent::node()[name() = 'table-wrap']]/p">
-        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, ':')"/></label>
-        <caption>
-            <p><xsl:apply-templates select="@*|node()"/></p>
-        </caption>
-    </xsl:template>
-    
-    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'table')]]">
-        <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
-    </xsl:template>
-
-    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'footnote text')]]">
-        <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
-    </xsl:template>
-    
-    <xsl:template match="//table-wrap/boxed-text">
-        <xsl:apply-templates select="@*|node()" />
-    </xsl:template>
-    
-    <xsl:template match="//boxed-text/*" mode="specific-use">
-        <xsl:copy>
-            <xsl:attribute name="specific-use">
-                <xsl:value-of select="../@specific-use" />
-            </xsl:attribute>
-            <xsl:apply-templates />
-        </xsl:copy>
-    </xsl:template>
-    
+    <!-- handle tables -->
+    <!-- combine table caption, label and content into table-wrap !!! This should actually be handled by Pandoc !!! -->
     <xsl:template match="//table-wrap">
-        <xsl:variable name="table_id" select="replace(./boxed-text/@specific-use,' ','-')"/>
+        <xsl:variable name="table_id" select="replace(substring-before(preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]/@specific-use, '#'),' ','-')"/>
         <table-wrap id="{$table_id}">
-            <xsl:apply-templates select="@*|node()"/>
+            <xsl:apply-templates select="@*"/>
+            <label><xsl:value-of select="substring-after(preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]/@specific-use, '#')"/></label>
+            <caption>
+                <p>
+                    <xsl:value-of select="preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]"/>
+                </p>
+            </caption>
+            <xsl:apply-templates select="node()"/>
         </table-wrap>
     </xsl:template>
+
+    <!-- Skip boxed-text[starts-with(@specific-use, 'table')] to prevent duplication, this is handled in //table-wrap -->
+    <xsl:template match="//boxed-text[starts-with(@specific-use, 'table')]"/>
     
     <xsl:template match="//aff/*">
         <label>
@@ -78,7 +83,18 @@
         </label>
         <xsl:apply-templates select="@*|node()"/>
     </xsl:template>
+
+    <!-- STILL REQUIRED ??? -->
+    <!-- <xsl:template match="//table-wrap/boxed-text">
+        <xsl:apply-templates select="@*|node()" />
+    </xsl:template> -->
+
+    <!-- STILL REQUIRED ??? -->
+    <!-- <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'table')]]">
+        <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
+    </xsl:template> -->
     
+    <!-- handle other stuff -->
     <xsl:template match="license-p">
         <license-p>
             <xsl:apply-templates select="*"/>
@@ -96,4 +112,18 @@
     <xsl:template match="named-content[@content-type='citation_suggestion']">
         <xsl:value-of select="." disable-output-escaping="yes"/>
     </xsl:template>
+
+    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'footnote text')]]">
+        <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
+    </xsl:template>
+
+    <xsl:template match="//boxed-text/*" mode="specific-use">
+        <xsl:copy>
+            <xsl:attribute name="specific-use">
+                <xsl:value-of select="../@specific-use" />
+            </xsl:attribute>
+            <xsl:apply-templates />
+        </xsl:copy>
+    </xsl:template>
+
 </xsl:stylesheet>

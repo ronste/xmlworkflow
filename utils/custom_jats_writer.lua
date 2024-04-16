@@ -182,7 +182,7 @@ function Writer (doc, opts)
                     if (div.attr.attributes['custom-style'] == pandoc.utils.stringify(doc.meta.figureLabel)) then
                         -- count number of figures
                         figCount = figCount + 1
-                        div.attr.attributes['specific-use'] = 'figure'..figCount..':'..pandoc.utils.stringify(doc.meta.figureLabel)..' '..figCount
+                        div.attr.attributes['specific-use'] = 'figure '..figCount..'#'..pandoc.utils.stringify(doc.meta.figureLabel)..' '..figCount
                     else
                         -- remove Word figure label
                         div.content[1].content:remove(1)
@@ -198,7 +198,7 @@ function Writer (doc, opts)
                 if styles[div.attr.attributes['custom-style']] then
                     -- count number of tables
                     tableCount = tableCount + 1
-                    div.attr.attributes['specific-use'] = 'table '..tableCount..':'..pandoc.utils.stringify(doc.meta.tableLabel)..' '..tableCount
+                    div.attr.attributes['specific-use'] = 'table '..tableCount..'#'..pandoc.utils.stringify(doc.meta.tableLabel)..' '..tableCount
                     -- remove Word table label (and Spaces)
                     div.content[1].content:remove(1)
                     div.content[1].content:remove(1)
@@ -237,19 +237,6 @@ function Writer (doc, opts)
     -- debugPrint(doc.meta, "doc.meta")
 
     local jats = pandoc.write(d, 'jats+element_citations', opts)
-
-    -- combine boxed-text graphic and caption paragraph
-    jats = jats:gsub('</boxed%-text>\n%s+<boxed%-text specific%-use="figure">\n%s+','  ')
-
-    -- combine boxed-text table label with table-wrap
-    jats = jats:gsub('<boxed%-text specific%-use="table ','<table-wrap>\n        <boxed-text specific-use="table')
-    jats = jats:gsub('</boxed%-text>\n%s+<table%-wrap>','  </boxed-text>');
-    jats = jats:gsub('dtd%-version="1.2"','dtd-version="1.3"');
-
-    -- add volume and issue tags after pub-date
-    jats = jats:gsub('</pub%-date>',
-        '</pub-date><volume>'..pandoc.utils.stringify(doc.meta.journal['volume'])..
-        '</volume><issue>'..pandoc.utils.stringify(doc.meta.journal['issue'])..'</issue>');
 
     -- remove boxed-text tags from custom-style paragarphs
     jats = jats:gsub('\n<boxed%-text>\n%s%s<p>REMOVE</p>\n</boxed%-text>','');
