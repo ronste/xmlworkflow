@@ -84,7 +84,12 @@ div table tr:hover {
 }
 
 div table th p.table-turn-right {
-  padding: 0px;
+  padding: 0px 0px 0px 1em;
+  text-align: left;
+}
+
+div table th p.table-turn-left {
+  padding: 0px 1em 0px 0px;
   text-align: left;
 }
 

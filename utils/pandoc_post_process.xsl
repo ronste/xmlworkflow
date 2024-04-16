@@ -38,25 +38,6 @@
 
     <!-- Skip //boxed-text[@specific-use="figure"] to prevent duplication, this is handled in //boxed-text[starts-with(@specific-use, 'figure')] -->
     <xsl:template match="//boxed-text[@specific-use='figure']"/>
-
-    <!-- STILL REQUIRED ???
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure') and ./p]">
-        <xsl:variable name="fig_id" select="replace(@specific-use,' ','-')"/>
-        <fig id="{$fig_id}" position="float" orientation="portrait">
-            <xsl:apply-templates select="*|node()">
-                <xsl:sort select="position()"
-                    data-type="number" order="descending"/>
-            </xsl:apply-templates>
-        </fig>
-    </xsl:template>
-    
-    <xsl:template match="//boxed-text[starts-with(@specific-use, 'figure')]/p">
-        <xsl:attribute name="id"><xsl:value-of select="substring-before(./parent::node()/@specific-use, '#')"/></xsl:attribute>
-        <label><xsl:value-of select="substring-after(./parent::node()/@specific-use, '#')"/></label>
-        <caption>
-            <p><xsl:apply-templates select="@*|node()"/></p>
-        </caption>
-    </xsl:template> -->
     
     <!-- handle tables -->
     <!-- combine table caption, label and content into table-wrap !!! This should actually be handled by Pandoc !!! -->
@@ -84,16 +65,21 @@
         <xsl:apply-templates select="@*|node()"/>
     </xsl:template>
 
-    <!-- STILL REQUIRED ??? -->
-    <!-- <xsl:template match="//table-wrap/boxed-text">
-        <xsl:apply-templates select="@*|node()" />
-    </xsl:template> -->
-
-    <!-- STILL REQUIRED ??? -->
-    <!-- <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'table')]]">
+    <!-- handle Pandoc specific-use wrapper -->
+    <!--  and ./child::node()[starts-with(@specific-use, 'footnote text')] -->
+    <xsl:template match="//p[@specific-use='wrapper']">
         <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
-    </xsl:template> -->
-    
+    </xsl:template>
+
+    <xsl:template match="//boxed-text/*" mode="specific-use">
+        <xsl:copy>
+            <xsl:attribute name="specific-use">
+                <xsl:value-of select="../@specific-use" />
+            </xsl:attribute>
+            <xsl:apply-templates />
+        </xsl:copy>
+    </xsl:template>
+
     <!-- handle other stuff -->
     <xsl:template match="license-p">
         <license-p>
@@ -111,19 +97,6 @@
     
     <xsl:template match="named-content[@content-type='citation_suggestion']">
         <xsl:value-of select="." disable-output-escaping="yes"/>
-    </xsl:template>
-
-    <xsl:template match="//p[@specific-use='wrapper' and ./child::node()[starts-with(@specific-use, 'footnote text')]]">
-        <xsl:apply-templates select="./boxed-text/*" mode="specific-use"/>
-    </xsl:template>
-
-    <xsl:template match="//boxed-text/*" mode="specific-use">
-        <xsl:copy>
-            <xsl:attribute name="specific-use">
-                <xsl:value-of select="../@specific-use" />
-            </xsl:attribute>
-            <xsl:apply-templates />
-        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>
