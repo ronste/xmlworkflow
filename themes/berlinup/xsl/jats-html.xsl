@@ -431,7 +431,7 @@ or pipeline) parameterized.
   <xsl:template match="kwd-group | custom-meta" mode="metadata-inline">
     <div id="{concat(name(), '_meta')}" class="metadata">
       <h7 class="callout-title normal">
-        <span class="generated"><xsl:value-of select="label | meta-label"></xsl:value-of></span>
+        <span class="generated"><xsl:value-of select="label | @specific-use"></xsl:value-of></span>
         <span class="generated">:</span>
       </h7>
       <xsl:for-each select=".//kwd | meta-value">
@@ -2616,17 +2616,15 @@ or pipeline) parameterized.
   <xsl:template match="@content-type" mode="table-copy" />
 
   <!-- RS additions to tables -->
-
-  <xsl:template match="table//p">
-    <p>
-      <xsl:if test="@specific-use='table-turn-left'">
-        <xsl:attribute name="class">table-turn-left</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@specific-use='table-turn-right'">
-        <xsl:attribute name="class">table-turn-right</xsl:attribute>
-      </xsl:if>
-      <xsl:apply-templates />
-    </p>
+  <xsl:template match="table//th[p[@specific-use]] | table//td[p[@specific-use]]">
+    <xsl:variable name="class">
+      <xsl:value-of select="//p/@specific-use"></xsl:value-of>
+    </xsl:variable>
+    <xsl:element name="{name()}">
+      <div class="{$class}">
+        <xsl:apply-templates />
+      </div>
+    </xsl:element>
   </xsl:template>
 
 

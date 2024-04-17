@@ -95,7 +95,7 @@
     
     <xsl:template match="tex-math"></xsl:template>
     
-    <xsl:template match="named-content[@content-type='citation_suggestion']">
+    <xsl:template match="named-content[@content-type='citationSuggestion']">
         <xsl:value-of select="." disable-output-escaping="yes"/>
     </xsl:template>
 

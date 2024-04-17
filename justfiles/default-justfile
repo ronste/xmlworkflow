@@ -18,3 +18,4 @@ _default:
   echo "Theme path is:        $THEME_PATH/{{theme}}"
   echo "Utils path is:        $UTILS_PATH"
   echo "Input file is:        {{docx}}"
+  cp $TEMPLATE_PATH/metadata.yaml $METADATA_PATH/metadata.yaml

@@ -74,11 +74,16 @@ pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
 @cleanup-work:
   -rm $WORK_PATH/* 2> /dev/null
   -rm $WORK_PATH/media/* 2> /dev/null
+  -rm $WORK_PATH/metadata/* 2> /dev/null
 
 # Clean up the working directory and reset example file
 [no-cd]
-@reset-example: cleanup-work
+reset-example: _default cleanup-work
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
   cp $UTILS_PATH/Dummy_Article_Template.docx $WORK_PATH/Dummy_Article_Template.docx
+  cp $THEME_PATH/default/templates/metadata.yaml $METADATA_PATH/metadata.yaml
 
 #Run different test scripts
 @runtests:

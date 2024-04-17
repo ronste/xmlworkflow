@@ -21,7 +21,7 @@ function Writer (doc, opts)
                     processStyles['subject'], -- equals sections in OJS
                     processStyles['table-turn-right'],
                     processStyles['table-turn-left'],
-                    processStyles['citation_suggestion']
+                    processStyles['citationSuggestion']
                 })
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
@@ -139,13 +139,11 @@ function Writer (doc, opts)
                         end
                     end
                     -- citation suggestion
-                    if (div.attr.attributes['custom-style'] == processStyles['citation_suggestion']) then
+                    if (div.attr.attributes['custom-style'] == processStyles['citationSuggestion']) then
                         if (doc.meta.citationSuggestionLabel == nil) then
-                            doc.meta['citation_suggestion-label'] = div.attr.attributes['custom-style']
-                        else
-                            doc.meta['citation_suggestion-label'] = pandoc.utils.stringify(doc.meta.citationSuggestionLabel)
+                            doc.meta['citationSuggestionLabel'] = div.attr.attributes['custom-style']
                         end
-                        doc.meta['citation_suggestion'] = "TO BE IMPLEMENTED ON REQUEST"
+                        doc.meta['citationSuggestion'] = "TO BE IMPLEMENTED ON REQUEST"
                     end
                     -- handle table rotation styles
                     if (div.attr.attributes['custom-style'] == processStyles['table-turn-right']) then

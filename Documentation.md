@@ -52,7 +52,7 @@ Pandoc is used with the `docx+styles+citations` extensions to allow processing o
 
 #### The metadata Yaml file
 
-The file `work/metadata/metadata.yaml` contains all default metadata and configuration options used by Pandoc.
+The file `themes/<selected theme>/templates/metadata.yaml` contains all default metadata and configuration options used by Pandoc.
 
 For processing docx formating templates lists can be provided that map actual docx document template names used in the docx file to Jats XML annotation elements. In addition template names are defined which should be ingnored by Pandoc.
 In the example below the docx document template named "Autor*in Name" is mapped to the Jats XML author information (which will be mapped to different Jats XML contributer tags), by assigning it to "authorNames":

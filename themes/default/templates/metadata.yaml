@@ -70,7 +70,7 @@ license:
   text: "Dieses Werk steht unter einer Dummy-Lizenz"
   type: open-access
   link: http://creativecommons.org/licenses/by/4.0/
-citation_suggestion: 'Mustermann, M. and Musterfrau, M. (\<bold\>2022\<\/bold\>). Experimentelle Fallstudie: Erste Ergebnisse. \<italic\>Zeitschrift für Testologie 12(3)\<\/italic\>, S. 1-2. https://doi.org/10.1234/berlinup.v12i3.1'
+citationSuggestion: 'Mustermann, M. and Musterfrau, M. (\<bold\>2022\<\/bold\>). Experimentelle Fallstudie: Erste Ergebnisse. \<italic\>Zeitschrift für Testologie 12(3)\<\/italic\>, S. 1-2. https://doi.org/10.1234/berlinup.v12i3.1'
 geometry: margin=2cm
 references:
 processStyles:
@@ -86,7 +86,7 @@ processStyles:
   table-turn-left: "Tabelle-gedreht-links"
   table-caption: "Beschriftung Tabelle"
   figure-caption: "Beschriftung Abbildung"
-  # citation_suggestion: "Zitiervorschlag"
+  # citationSuggestion: "Zitiervorschlag"
 ignoreStyles:
 # this defines docx format templates to ignore
 - Zeitschriften-Logo
