@@ -5,7 +5,7 @@
 
 ---
 
-This repo contains a container image assembling different open source tools and a range of open source template files into a flexible framework that allows to define conversion toolchains. Currently it provides `docx -> (Jats) XML -> html -> pdf` and `docx -> (Jats) XML -> pdf` toolchains for single-source Jats-XML publishing.
+This repo contains a container image assembling different open source tools and a range of open source template files into a flexible framework for single source Jats/Bits XML publishing. The framework allows to define custom conversion toolchains that combine different conversion tools into an automized conversion workflow. Currently it provides a `docx -> (Jats) XML -> html -> pdf` toolchain by default.
 
 ***NOTE: This repo is under development.***
 This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
