@@ -27,7 +27,7 @@
         <fig id="{$fig_id}" position="float" orientation="portrait">
             <label><xsl:value-of select="substring-after(@specific-use, '#')"/></label>
             <caption>
-                <p><xsl:value-of select="following-sibling::boxed-text[@specific-use='figure']"/></p>
+                <p><xsl:value-of select="preceding-sibling::boxed-text[@specific-use='figure'] | following-sibling::boxed-text[@specific-use='figure']"/></p>
             </caption>
             <xsl:apply-templates select="*|node()">
                 <xsl:sort select="position()"
@@ -42,13 +42,20 @@
     <!-- handle tables -->
     <!-- combine table caption, label and content into table-wrap !!! This should actually be handled by Pandoc !!! -->
     <xsl:template match="//table-wrap">
-        <xsl:variable name="table_id" select="replace(substring-before(preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]/@specific-use, '#'),' ','-')"/>
+
+        <xsl:variable name="caption_before" select="preceding-sibling::*[1][local-name() = 'boxed-text' and starts-with(@specific-use, 'table')]"></xsl:variable>
+        <xsl:variable name="caption_after" select="following-sibling::*[1][local-name() = 'boxed-text' and starts-with(@specific-use, 'table')]"></xsl:variable>
+
+        <xsl:variable name="caption" select="concat($caption_before, $caption_after)"/>
+        <xsl:variable name="caption_label" select="concat($caption_before/@specific-use, $caption_after/@specific-use)"/>
+        
+        <xsl:variable name="table_id" select="replace(substring-before($caption_label, '#'),' ','-')"/>
         <table-wrap id="{$table_id}">
             <xsl:apply-templates select="@*"/>
-            <label><xsl:value-of select="substring-after(preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]/@specific-use, '#')"/></label>
+            <label><xsl:value-of select="substring-after($caption_label, '#')"/></label>
             <caption>
                 <p>
-                    <xsl:value-of select="preceding-sibling::boxed-text[starts-with(@specific-use, 'table')][1]"/>
+                    <xsl:value-of select="$caption"/>
                 </p>
             </caption>
             <xsl:apply-templates select="node()"/>
