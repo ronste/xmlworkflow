@@ -21,7 +21,8 @@ function Writer (doc, opts)
                     processStyles['subject'], -- equals sections in OJS
                     processStyles['table-turn-right'],
                     processStyles['table-turn-left'],
-                    processStyles['citationSuggestion']
+                    processStyles['citationSuggestion'],
+                    -- processStyles['bookPart'] -- Bits book-part tag
                 })
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
@@ -154,9 +155,16 @@ function Writer (doc, opts)
                         div.attr.attributes['specific-use'] = "table-turn-left"
                         return div
                     end
+                    -- -- handle Bits book-part
+                    -- if (div.attr.attributes['custom-style'] == processStyles['bookPart']) then
+                    --     -- debugPrint(div,'bookPart')
+                    --     div.attr.attributes['specific-use'] = "book-part#"..chapterCount
+                    --     chapterCount = chapterCount + 1
+                    --     return div
+                    -- end
                     -- mark handled divs to remove later
-                    div.attr.attributes['custom-style'] = Null
-                    div.content[1] = pandoc.Str("REMOVE")
+                    div.attr.attributes['custom-style'] = nil
+                    div.attr.attributes['specific-use'] = "REMOVE"
                     return div
                 end
                 -- remove custom styles not taken from docx (i.e. metadata that will be provided by OJS) 
@@ -172,6 +180,7 @@ function Writer (doc, opts)
                 })
                 -- return plain content for all other processed styles
                 if styles[div.attr.attributes['custom-style']] then
+                    -- print('Warning: Docx formating template "'..div.attr.attributes['custom-style']..'" is not handled by Pandoc Lua filter!')
                     return div.content
                 end
                 -- set figure label
@@ -227,6 +236,7 @@ function Writer (doc, opts)
     
     figCount = 0;
     tableCount = 0;
+    chapterCount = 0;
     opts.variables.affiliation = {}
     
     d = doc:walk(filter)
@@ -235,9 +245,6 @@ function Writer (doc, opts)
     -- debugPrint(doc.meta, "doc.meta")
 
     local jats = pandoc.write(d, 'jats+element_citations', opts)
-
-    -- remove boxed-text tags from custom-style paragarphs
-    jats = jats:gsub('\n<boxed%-text>\n%s%s<p>REMOVE</p>\n</boxed%-text>','');
     
     return jats
 end

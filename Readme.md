@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.3 (10.4.2024)
+- Version: 1.4 (19.4.2024)
 - Developed by: Ronald Steffen
 
 ---
@@ -27,6 +27,7 @@ Template files and other sources (e.g. css) are dereived from:
 - Preview of [NISO JATS Publishing 1.0](https://jats.nlm.nih.gov/publishing/tag-library/1.0/) XML
 - [NLM/NCBI  Journal Publishing 3.0](https://dtd.nlm.nih.gov/publishing/3.0/) Preview HTML
 - Journal Publishing 3.0 APA-like Citation
+- [NCBI Book Tag Set Version 2.1](https://dtd.nlm.nih.gov/book/2.1/index.html)
 
 ## Usage
 
@@ -48,7 +49,7 @@ To get an overview of all options run:
 which will output:
 
 ```text
-Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx | xml-file | html-file =<filename> ] [ <recipe> ]
+Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx-file | xml-file | html-file =<filename> ] [ <recipe> ]
 
 To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"
 If no docx file is provided the first docx file in the working dirctory will be taken.
@@ -59,25 +60,29 @@ Options:
     debug = true: Enables the debug options of the different tools.
     validate = true: Runs an XML validation with xmllint.
     develop = true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps.
-    docx | xml-file | html-file = <filename>: Specifies the path and name of the docx, xml or html source file to be converted.  
+    docx-file | xml-file | html-file = <filename>: Specifies the path and name of the docx, xml or html source file to be converted.
     pagedjs-polyfill = true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose.
 
 Available recipes:
-    all             # run all conversions (default)
-    cleanup-work    # Clean up the working directory removing all files in work and in work/media
-    docxtojats      # Generate Jats XML using the docxtojats converter
-    html            # Convert XML to HTML using Saxon HE 12
-    mathjax         # Convert Mathl to CHTML using mathjax
-    pagedjs         # Generate PDF using Pagedjs
-    pandoc          # Convert docx to XML with Pandoc
-    pandoc-pdf-html # Generate PDF from HTML using Pandoc
-    pandoc-pdf-xml  # Generate PDF from XML using Pandoc
-    pdf             # Generate PDF using Pandoc, Pagedjs and Weasyprint
-    reset-example   # Clean up the working directory and reset example file
-    runtests        # Run different test scripts
-    weasyprint      # Generate PDF using Weasyprint
-    xml             # Convert docx to XML using Pandoc + Saxon HE 12
-    xml-validate    # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+    all                   # run all conversions (default)
+    bitsxml               # Convert docx to Bits XML (experimental, metadata not yet supported).
+    cleanup-work          # Clean up the working directory removing all files in work and in work/media
+    copy-work destination # Copies the full content of the work folder into a new folder inside the configured COPY_PATH folder
+    docxtojats            # Generate Jats XML using the docxtojats converter
+    html                  # Convert XML to HTML using Saxon HE 12
+    mathjax               # Convert Mathl to CHTML using mathjax
+    pagedjs               # Generate PDF using Pagedjs
+    pandoc                # Convert docx to Jats XML using Pandoc.
+    pandoc-bits           # Convert docx to Bits XML using Pandoc (experimental, metadata not yet supported).
+    pandoc-pdf-html       # Generate PDF from HTML using Pandoc
+    pandoc-pdf-xml        # Generate PDF from XML using Pandoc
+    pdf                   # Generate PDF using Pandoc, Pagedjs and Weasyprint
+    reset-bits-example    # Clean up the working directory and reset Bits XML example file
+    reset-jats-example    # Clean up the working directory and reset Jats XML example file
+    runtests              # Run different test scripts
+    weasyprint            # Generate PDF using Weasyprint
+    xml                   # Convert docx to XML using Pandoc + Saxon HE 12.
+    xml-validate          # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
 ```
 
 More information on individual conversion steps may be available by running:

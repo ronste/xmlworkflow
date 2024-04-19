@@ -26,12 +26,13 @@ alias weasy := weasyprint
 
 # command line parameters
 theme := 'default'
-docx := '$(basename "$(find $WORK_PATH -type f -name "*.docx" | head -n 1)")'
+docx-file := '$(basename "$(find $WORK_PATH -type f -name "*.docx" | head -n 1)")'
 xml-file := 'buffer.xml'
+xml-mode := 'jats'
 buffer-xml-file := 'buffer.xml'
 html-file := 'buffer.html'
 buffer-html-file := 'buffer.html'
-xsl-file := 'pandoc_post_process.xsl'
+xsl-file := 'pandoc_post_process_jats.xsl'
 debug := 'false'
 validate := 'false'
 develop := 'false'
@@ -76,15 +77,28 @@ pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
   -rm $WORK_PATH/media/* 2> /dev/null
   -rm $WORK_PATH/metadata/* 2> /dev/null
 
-# Clean up the working directory and reset example file
+# Clean up the working directory and reset Jats XML example file 
 [no-cd]
-reset-example: _default cleanup-work
+reset-jats-example: (reset-example "jats")
+
+# Clean up the working directory and reset Bits XML example file 
+[no-cd]
+reset-bits-example: (reset-example "bits")
+
+[no-cd, private]
+reset-example xml-mode=xml-mode: cleanup-work && _default 
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
-  cp $UTILS_PATH/Dummy_Article_Template.docx $WORK_PATH/Dummy_Article_Template.docx
+  cp $UTILS_PATH/Dummy_{{ if xml-mode == 'jats' { "Article" } else { "Book" } }}_Template.docx $WORK_PATH/Dummy_{{ if xml-mode == 'jats' { "Article" } else { "Book" } }}_Template.docx
   cp $THEME_PATH/default/templates/metadata.yaml $METADATA_PATH/metadata.yaml
 
 #Run different test scripts
 @runtests:
   $UTILS_PATH/run_tests.sh
+
+# Copies the full content of the work folder into a new folder inside the configured COPY_PATH folder
+[no-cd]
+@copy-work destination:
+  mkdir $COPY_PATH/{{destination}}
+  cp -r $WORK_PATH/* $COPY_PATH/{{destination}}

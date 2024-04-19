@@ -86,7 +86,8 @@ processStyles:
   table-turn-left: "Tabelle-gedreht-links"
   table-caption: "Beschriftung Tabelle"
   figure-caption: "Beschriftung Abbildung"
-  # citationSuggestion: "Zitiervorschlag"
+  citationSuggestion: "Zitiervorschlag"
+  # bookPart: "Kapitel"
 ignoreStyles:
 # this defines docx format templates to ignore
 - Zeitschriften-Logo

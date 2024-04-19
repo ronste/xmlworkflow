@@ -26,7 +26,7 @@ pagedjs-:
     {{ if develop == "true" { "--style $DEFAULT_CSS_PATH/develop.css" } else { "" } }} \
     --browserArgs '--no-sandbox' \
     -i "$WORK_PATH/{{html-file}}" \
-    -o "$WORK_PATH/{{docx}}_pagedjs.pdf"
+    -o "$WORK_PATH/{{docx-file}}_pagedjs.pdf"
   echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF using Pagedjs

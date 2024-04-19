@@ -99,4 +99,7 @@
         <xsl:value-of select="." disable-output-escaping="yes"/>
     </xsl:template>
 
+    <!-- remove all tags already handle in custom lua writer -->
+    <xsl:template match="boxed-text[@specific-use='REMOVE']"></xsl:template>
+
 </xsl:stylesheet>

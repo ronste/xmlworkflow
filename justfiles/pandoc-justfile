@@ -10,23 +10,29 @@ _pandoc-help:
   https://pandoc.org/
 
   EOF
+  
+# Convert docx to Jats XML using Pandoc.
+pandoc: (pandoc- xml-mode)
 
-# Convert docx to XML with Pandoc
-[no-cd]
-pandoc: _default
+# Convert docx to Bits XML using Pandoc (experimental, metadata not yet supported).
+pandoc-bits: (pandoc- "bits")
+
+[no-cd, private]
+pandoc- xml-mode=xml-mode: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
   echo -e "{{hcs}}Converting docx to XML with Pandoc ...{{nc}}"
-  pandoc {{ if debug == "true" { "--verbose" } else { "" } }} $WORK_PATH/{{docx}} -s \
+  echo -e 'Using template file {{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }}'
+  pandoc {{ if debug == "true" { "--verbose" } else { "" } }} $WORK_PATH/{{docx-file}} -s \
     -f docx+styles+citations \
     --extract-media="." \
     --metadata-file="$METADATA_PATH/metadata.yaml" \
     --citeproc \
-    --template "$UTILS_PATH/jats_template.tex" \
+    --template $UTILS_PATH/{{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }} \
     -t "$UTILS_PATH/custom_jats_writer.lua" \
-    -o "$WORK_PATH/{{docx}}_Pandoc.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_Pandoc.xml" "$WORK_PATH/{{buffer-xml-file}}"
+    -o "$WORK_PATH/{{docx-file}}_Pandoc.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx-file}}_Pandoc.xml" "$WORK_PATH/{{buffer-xml-file}}"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
   echo "Elapsed Time: $SECONDS seconds"
 
@@ -43,7 +49,7 @@ pandoc-pdf- pandoc_from=pandoc_from: _default
     --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
     --metadata-file="$METADATA_PATH/metadata.yaml" \
     -t pdf \
-    -o "$WORK_PATH/{{docx}}_Pandoc.pdf"
+    -o "$WORK_PATH/{{docx-file}}_Pandoc.pdf"
   echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF from HTML using Pandoc

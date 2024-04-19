@@ -21,35 +21,35 @@ html-: _default
   java -cp "{{javaClassPath}}" \
     net.sf.saxon.Transform -s:"$WORK_PATH/{{xml-file}}" \
     -xsl:"$XSL_PATH/jats-APAcit.xsl" \
-    -o:"$WORK_PATH/{{docx}}_SaxonHE_cit.xml"
-  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx}}_SaxonHE_cit.xml" "$WORK_PATH/{{buffer-xml-file}}"
+    -o:"$WORK_PATH/{{docx-file}}_SaxonHE_cit.xml"
+  cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx-file}}_SaxonHE_cit.xml" "$WORK_PATH/{{buffer-xml-file}}"
   # run html conversion
   java -cp "{{javaClassPath}}" \
     net.sf.saxon.Transform -s:"$WORK_PATH/{{buffer-xml-file}}" \
     -xsl:"$XSL_PATH/jats-html.xsl" \
-    -o:"$WORK_PATH/{{docx}}_SaxonHE.html"
+    -o:"$WORK_PATH/{{docx-file}}_SaxonHE.html"
   # add development styles
   if [ "{{ develop }}" = "true" ]; then \
     echo -e "{{wcs}}Adding development styles ...{{nc}}"; \
-    sed "{{develop_html_fragment}}" -i "$WORK_PATH/{{docx}}_SaxonHE.html"; \
+    sed "{{develop_html_fragment}}" -i "$WORK_PATH/{{docx-file}}_SaxonHE.html"; \
     cp {{ if debug == "true" { "--verbose" } else { "" } }} $CSS_PATH/develop.css $WORK_PATH/media/develop.css; \
     echo -e "TODO: start development server"; \
   fi
   # copy to buffer
-  cp "$WORK_PATH/{{docx}}_SaxonHE.html" "$WORK_PATH/{{buffer-html-file}}"
+  cp "$WORK_PATH/{{docx-file}}_SaxonHE.html" "$WORK_PATH/{{buffer-html-file}}"
   # add pagedjs polyfill to output file only
   if [ "{{ pagedjs-polyfill }}" = "true" ]; then \
     echo -e "{{wcs}}Adding pagedjs polyfill ...{{nc}}"; \
-    sed -i '/<head>/a <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>' "$WORK_PATH/{{docx}}_SaxonHE.html"; \
-    sed -i '/<head>/a <link rel="stylesheet" type="text/css" href="media/pagedjs.css">' "$WORK_PATH/{{docx}}_SaxonHE.html"; \
+    sed -i '/<head>/a <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>' "$WORK_PATH/{{docx-file}}_SaxonHE.html"; \
+    sed -i '/<head>/a <link rel="stylesheet" type="text/css" href="media/pagedjs.css">' "$WORK_PATH/{{docx-file}}_SaxonHE.html"; \
   fi
   # validate html
   set +e
   if [ "{{ validate }}" = "true" ]; then \
     echo -e "{{hcs}}Validating XML with html-validate ...{{nc}}"; \
-    # xmllint "$WORK_PATH/{{docx}}_SaxonHE.html" --noout --valid --html; \
+    # xmllint "$WORK_PATH/{{docx-file}}_SaxonHE.html" --noout --valid --html; \
     # https://html-validate.org/usage/cli.html
-    html-validate "$WORK_PATH/{{docx}}_SaxonHE.html"
+    html-validate "$WORK_PATH/{{docx-file}}_SaxonHE.html"
     if [ $? -eq 0 ]; then \
       echo -e "{{hcs}}Validation successfull{{nc}}"; \
     else \

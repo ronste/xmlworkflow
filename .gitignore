@@ -1,1 +1,4 @@
-work
+work/*
+XML Workflow.xpr
+settings.json
+store/*

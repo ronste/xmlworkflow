@@ -21,7 +21,7 @@ weasyprint-: _default
     -m print -p \
     -s "$WORK_PATH/media/weasyprint.css" \
     {{ if develop == "true" { "-s $CSS_PATH/develop.css" } else { "" } }} \
-    -p "$WORK_PATH/{{html-file}}" "$WORK_PATH/{{docx}}_weasyprint.pdf"
+    -p "$WORK_PATH/{{html-file}}" "$WORK_PATH/{{docx-file}}_weasyprint.pdf"
   echo "Elapsed Time: $SECONDS seconds"
 
 # Generate PDF using Weasyprint

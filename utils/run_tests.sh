@@ -1,6 +1,7 @@
 #! /bin/bash
 set -euo pipefail
 cd /root/xmlworkflow/work
+processDocx reset-example
 processDocx
 processDocx validate=true html-
 processDocx debug=true validate=true develop=true weasyprint-
@@ -12,3 +13,6 @@ processDocx xml-file='/root/xmlworkflow/work/buffer.xml' xml-validate
 processDocx reset-example
 processDocx
 processDocx xml-file=buffer.xml html-
+processDocx reset-bits-example
+processDocx bitsxml html-
+processDocx copy-work test

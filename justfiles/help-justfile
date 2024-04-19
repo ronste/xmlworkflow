@@ -39,7 +39,7 @@ help topic="help":
 
 [private]
 @default-help:
-  echo "Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx | xml-file | html-file =<filename> ] [ <recipe> ]"
+  echo "Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx-file | xml-file | html-file =<filename> ] [ <recipe> ]"
   echo ""
   echo 'To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"'
   echo "If no docx file is provided the first docx file in the working dirctory will be taken."
@@ -50,7 +50,7 @@ help topic="help":
   echo "    debug = true: Enables the debug options of the different tools."
   echo "    validate = true: Runs an XML validation with xmllint."
   echo "    develop = true: Adds specific css rules to the conversion of HTML and PDF files to provide features for debugging and development of Print CSS conversion steps."
-  echo "    docx | xml-file | html-file = <filename>: Specifies the path and name of the docx, xml or html source file to be converted."
+  echo "    docx-file | xml-file | html-file = <filename>: Specifies the path and name of the docx, xml or html source file to be converted."
   echo "    pagedjs-polyfill = true: Adds the Pagedjs polyfill to the final HTML output for debugging purpose."
   echo ""
   just --list
