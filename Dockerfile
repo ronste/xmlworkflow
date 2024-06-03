@@ -115,4 +115,9 @@ RUN set -xe && cd root \
 
 COPY "themes" "/root/xmlworkflow/themes"
 COPY "utils/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
+COPY "utils" "/root/xmlworkflow/utils"
+COPY "justfile" "/root/xmlworkflow/justfile"
+COPY ".env" "/root/xmlworkflow/.env"
+COPY "utils/mml2chtml-page" "/root/xmlworkflow/lib/mml2chtml-page"
+COPY "justfiles" "/root/xmlworkflow/justfiles"
 

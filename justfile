@@ -36,7 +36,7 @@ xsl-file := 'pandoc_post_process_jats.xsl'
 debug := 'false'
 validate := 'false'
 develop := 'false'
-pandoc_from := 'XML'
+pandoc_from := 'xml'
 pagedjs-polyfill := 'false'
 
 # path variables

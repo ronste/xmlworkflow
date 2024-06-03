@@ -59,7 +59,7 @@ pandoc-pdf-html: _default html (pandoc-pdf- pandoc_from)
 pandoc-pdf-html-: _default (pandoc-pdf- pandoc_from)
 
 # Generate PDF from XML using Pandoc
-pandoc-pdf-xml: _default xml (pandoc-pdf- "XML")
+pandoc-pdf-xml: _default xml (pandoc-pdf- "xml")
 
 [private]
-pandoc-pdf-xml-: _default (pandoc-pdf- "XML")
+pandoc-pdf-xml-: _default (pandoc-pdf- "xml")
