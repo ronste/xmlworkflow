@@ -29,16 +29,27 @@ Template files and other sources (e.g. css) are dereived from:
 - Journal Publishing 3.0 APA-like Citation
 - [NCBI Book Tag Set Version 2.1](https://dtd.nlm.nih.gov/book/2.1/index.html)
 
-## Usage
+## Installation & Usage
 
 To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained in the [documentation](Documentation.md).
 Please note that the default conversion chain (which handles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
-1) Build the conainter image according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`
-2) Run the image in a conatiner with `docker-compose up --detach`
-3) Start the docx conversion with the following command:
+### Installation
+1) Clone the repo and build the conainter image according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
+    - `docker build -t xmlworkflow:latest .`
+    - `podman build -t xmlworkflow:latest .`
 
-`docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
+### Prepare working environment
+2) Create a directory to hold all your working directories and files
+3) From the created directory run the image in a conatiner with:
+   - `docker-compose up --detach` (using the povided docker-compose.ymal file)
+   - Or source with `. podman-run-prod.sh` to start podman container
+4) Prepare your working directory by copying a docx file into the folder `work` or, alternatively, run `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-example"` to use the demo docx file
+
+### Perfrom a docx converion
+5) Start the docx conversion with the following command:
+    - `docker exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
+    - `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
 
 This will create a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
 
