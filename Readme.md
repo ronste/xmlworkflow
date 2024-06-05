@@ -33,7 +33,7 @@ Template files and other sources (e.g. css) are dereived from:
 
 ### Installation
 
-1) Download all files required to build and run the image/container (you don't need to clone this repo to your host machine):
+1) Download all files required to build and run the image/container (To use this repo in "production mode" you don't need to clone it to your host machine. This might only be necessary in case you want to develop new templates.):
   ```
   wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
   source download.sh
