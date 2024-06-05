@@ -47,7 +47,7 @@ Template files and other sources (e.g. css) are dereived from:
 ### Prepare working environment
 1) Create a directory to hold all your working directories and files
 2) From inside this directory start a conatiner with:
-    `source . <path-to-your-download-directory>/xmlworkflow-run-prod.sh <your-container-name>` to start a container
+    `. <path-to-your-download-directory>/xmlworkflow-run-prod.sh <your-container-name>` to start a container
 3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-example"` to use the demo docx file
 
 ### Perfrom a docx converion
