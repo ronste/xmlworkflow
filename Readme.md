@@ -35,7 +35,13 @@ To run a full docx to pdf conversion a specifically prepared MS Word docx docume
 Please note that the default conversion chain (which handles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
 ### Installation
-1) Clone the repo and build the conainter image from inside the cloned directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
+
+1) Download all files required to build and run the image/container (you don't need to clone to repo to your host machine):
+  ```
+  wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
+  source download.sh
+  ```
+2) Build the conainter image from inside the download directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
     - `docker build -t xmlworkflow:latest .`
     - `podman build -t xmlworkflow:latest .`
 

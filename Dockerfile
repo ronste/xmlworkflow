@@ -75,7 +75,8 @@ RUN set -xe && apt-get update  \
 
 # install required tools not available through the Debian repository
 RUN set -xe && cd root \
-    && mkdir xmlworkflow \
+    && git clone https://github.com/ronste/xmlworkflow.git \
+    # && mkdir xmlworkflow \
     && mkdir xmlworkflow/lib \
     && mkdir xmlworkflow/work \
     && mkdir xmlworkflow/work/media \
@@ -113,11 +114,11 @@ RUN set -xe && cd root \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx
 
-COPY "themes" "/root/xmlworkflow/themes"
+# COPY "themes" "/root/xmlworkflow/themes"
 COPY "utils/Dummy_Article_Template.docx" "/root/xmlworkflow/work/Dummy_Article_Template.docx"
-COPY "utils" "/root/xmlworkflow/utils"
-COPY "justfile" "/root/xmlworkflow/justfile"
-COPY ".env" "/root/xmlworkflow/.env"
-COPY "utils/mml2chtml-page" "/root/xmlworkflow/lib/mml2chtml-page"
-COPY "justfiles" "/root/xmlworkflow/justfiles"
+# COPY "utils" "/root/xmlworkflow/utils"
+# COPY "justfile" "/root/xmlworkflow/justfile"
+# COPY ".env" "/root/xmlworkflow/.env"
+# COPY "utils/mml2chtml-page" "/root/xmlworkflow/lib/mml2chtml-page"
+# COPY "justfiles" "/root/xmlworkflow/justfiles"
 
