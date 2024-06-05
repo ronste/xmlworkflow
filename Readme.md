@@ -46,10 +46,9 @@ Please note that the default conversion chain (which handles metadata from the d
     - `podman build -t xmlworkflow:latest .`
 
 ### Prepare working environment
-2) Create a directory to hold all your working directories and files (doesn't need to be inside the repo)
-3) Start a conatiner with:
-   - `docker-compose up --detach` from the cloned directory (using the povided docker-compose.ymal file)
-   - Or (from the directory created above) source `. <path to repo>/podman-run-prod.sh` to start a podman container
+1) Create a directory to hold all your working directories and files
+2) Start a conatiner with:
+   - Or (from the directory created above) source `. <path to your download directory>/xmlworkflow-run-prod.sh` to start a container
 4) Prepare your working directory by copying a docx file into the folder `work` or, alternatively, run `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-example"` to use the demo docx file
 
 ### Perfrom a docx converion
