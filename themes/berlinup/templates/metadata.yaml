@@ -50,15 +50,15 @@ geometry: margin=2cm
 references:
 processStyles:
   # this maps jats tags to docx format templates
-  title: Title
-  abstract: Abstract
-  keywords: Schlagwörter
-  subject: Rubrik
-  authorNames: "Autor*in Name"
-  affiliations: "Autor*in Affiliation"
-  corresp: "Corresponding Author"
-  table-turn-right: "Tabelle-gedreht-rechts"
-  table-turn-left: "Tabelle-gedreht-links"
+  title: "BerlinUP Main Title"
+  abstract: "BerlinUP Abstract"
+  keywords: "Berlin UP Keywords"
+  # subject: Rubrik
+  authorNames: "BerlinUP Author"
+  # affiliations: "Autor*in Affiliation"
+  # corresp: "Corresponding Author"
+  # table-turn-right: "Tabelle-gedreht-rechts"
+  # table-turn-left: "Tabelle-gedreht-links"
   table-caption: "Beschriftung Tabelle"
   figure-caption: "Beschriftung Abbildung"
   # citationSuggestion: "Zitiervorschlag"

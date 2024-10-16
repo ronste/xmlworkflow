@@ -1,12 +1,15 @@
 #!/bin/bash
 
 # Set default value
-param=${1:-"xmlworkflow"}
+containername=${1:-"xmlworkflow:latest"}
+mode=${2:-"production"}
+
 
 # Function to display help message
 display_help() {
-    echo "Usage: xmlworkflow-run-prod <container-name>"
-    echo "If no parameter is provided, the default container name is 'xmlworkflow'."
+    echo "Usage: xmlworkflow-run-prod <container-name> <mode>"
+    echo "If no parameter is provided, the default container name is 'xmlworkflow:latest'."
+    echo "Parameter mode can be one of 'production' (default value), 'devtheme' or 'dev'. This parameter determines which folders will be bind mounted. (feature under development)"
 }
 
 # Check if help option is provided
@@ -17,19 +20,22 @@ fi
 
 mkdir -p work/metadata
 mkdir -p store
+mkdir -p theme
 
 if command -v podman &> /dev/null
 then
     podman run -it --name $1 -d \
         -v ./work:/root/xmlworkflow/work \
         -v ./store:/root/xmlworkflow/store \
-        xmlworkflow:latest
+        {containername}
+        # binding for full dev mode needs to bind all folders individually (otherwise lib folder will not be available):
+        # podman run -it --name xmlworkflow -d -v .:/root/xmlworkflow xmlworkflow:latest
 elif command -v docker &> /dev/null
 then
     docker run -it --name $1 -d \
         -v ./work:/root/xmlworkflow/work \
         -v ./store:/root/xmlworkflow/store \
-        xmlworkflow:latest
+        {containername}
 else
     echo "Neither Podman nor Docker is installed. Please install one of them to run the container."
 fi

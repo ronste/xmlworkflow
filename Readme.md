@@ -33,18 +33,19 @@ Template files and other sources (e.g. css) are dereived from:
 
 ### Installation
 
-1) Download all files required to build and run the image/container (To use this repo in "production mode" you don't need to clone it to your host machine. This might only be necessary in case you want to develop new templates.):
-  ```
-  wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
-  source download.sh
-  ```
-2) Build the conainter image from inside the download directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
+1. Download all files required to build and run the image/container (To use this repo in "production mode" you don't need to clone it to your host machine. This might only be necessary in case you want to develop new templates.):
+        ```bash
+        wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
+        source download.sh
+        ```
+2. Build the conainter image from inside the download directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
     - `docker build -t xmlworkflow:latest .`
     - `podman build -t xmlworkflow:latest .`
 
   Further examples will be for `podman` but should also work with `docker`
 
 ### Prepare working environment
+
 1) Create a directory to hold all your working directories and files
 2) From inside this directory start a conatiner with:
     `. <path-to-your-download-directory>/xmlworkflow-run-prod.sh <your-container-name>` to start a container
@@ -168,7 +169,7 @@ An empty HTML template that loads the development CSS and the Pagedjs polyfill i
 
 To run a set of different tests use:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
+`podman exec \<your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
 
 ## Next steps
 

@@ -95,6 +95,7 @@ RUN set -xe && cd root \
     # mathjax, esm for weasyprint
     && npm install esm yargs mathjax-full \
     # pagedjs/puppeteer, html validation
+    # RS: 15.10.2024 pagedjs-cli and puppeteer generate deprecation warnings, version 0.5 beta of pagedjs-cli exists but still contains deprecated dependencies
     && npm install -g pagedjs-cli puppeteer html-validate \
     # for pandoc custom writer
     && wget https://luarocks.org/releases/luarocks-3.9.2.tar.gz \

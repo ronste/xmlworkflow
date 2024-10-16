@@ -24,7 +24,7 @@ pandoc- xml-mode=xml-mode: _default
   source ~/.bashrc
   echo -e "{{hcs}}Converting docx to XML with Pandoc ...{{nc}}"
   echo -e 'Using template file {{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }}'
-  pandoc {{ if debug == "true" { "--verbose" } else { "" } }} $WORK_PATH/{{docx-file}} -s \
+  pandoc {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx-file}}" -s \
     -f docx+styles+citations \
     --extract-media="." \
     --metadata-file="$METADATA_PATH/metadata.yaml" \
