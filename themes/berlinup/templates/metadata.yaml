@@ -12,7 +12,7 @@ article:
   - Muster Katergorie B
   author-notes:
     conflict: "Conflict of interest"
-    con: "dasdfasdf"
+    con: "Contributed-by information."
     corresp:
       - id: 1
         email: corrsep@email.de

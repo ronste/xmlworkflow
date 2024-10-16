@@ -9,6 +9,7 @@ function Writer (doc, opts)
             --    and move style information of elements processed later (xslt) to the 
             --    Jats 'specific-use' attribute
             if div.attr.attributes['custom-style'] then
+                debugPrint(div.attr.attributes['custom-style'], "Processing")
                 -- process styles containing metadata
                 processStyles = Table2Array(doc.meta.processStyles)
                 local styles = Set({
@@ -26,55 +27,10 @@ function Writer (doc, opts)
                 })
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
+                    debugPrint(div.attr.attributes['custom-style'],"Evaluating")
                     -- Author Names, ...
                     if (div.attr.attributes['custom-style'] == processStyles['authorNames']) then
-                        -- because we are concatenating strings later we need to initialize them
-                        authorArray = {
-                            surname = "",
-                            ["given-names"] = "",
-                            email = "",
-                            affiliation = {},
-                            ["cor-id"] = ""
-                        }
-                        sep = ""
-                        authors = {}
-                        for i, item in ipairs(div.content[1].content) do
-                            if item ~= pandoc.Space() then
-                                -- if its a Superscript it should be the affiliation value
-                                -- it should also be the end of the authors name
-                                if item.t == "Superscript" then
-                                    for a, aff in ipairs(item.content) do
-                                        if aff ~= pandoc.Space() then
-                                            dummy = (aff.text):gsub(",", "")
-                                            table.insert(authorArray.affiliation, dummy)
-                                        end
-                                    end
-                                    table.insert(authors, authorArray)
-                                    authorArray = {
-                                        surname = "",
-                                        ["given-names"] = "",
-                                        email = "",
-                                        affiliation = {},
-                                        ["cor-id"] = ""
-                                    }
-                                    sep = ""
-                                else
-                                    -- if its not Superscript it should be a string we can parse for the name
-                                    if item.t == "Str" then
-                                        local separators = Set({",","&"})
-                                        if separators[item.text] then
-                                            -- skip separator characters
-                                        else
-                                            -- copy author name, we expect the last name to be the surname
-                                            authorArray["given-names"] = authorArray["given-names"]..sep..authorArray.surname
-                                            authorArray.surname = item.text
-                                            sep = " "
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                        doc.meta.author = authors
+                        doc.meta.author = extrcatAuthorNames(div)
                     end
                     -- Author Affiliations
                     if (div.attr.attributes['custom-style'] == processStyles['affiliations']) then
@@ -103,6 +59,7 @@ function Writer (doc, opts)
                     end
                     -- Title
                     if (div.attr.attributes['custom-style'] == processStyles['title']) then
+                        debugPrint(div.content[1].content, "EXTRACTED TITLE:")
                         doc.meta.title = div.content[1].content
                     end
                     -- Subject (Article, Editorial, ...)
@@ -180,7 +137,7 @@ function Writer (doc, opts)
                 })
                 -- return plain content for all other processed styles
                 if styles[div.attr.attributes['custom-style']] then
-                    -- print('Warning: Docx formating template "'..div.attr.attributes['custom-style']..'" is not handled by Pandoc Lua filter!')
+                    print('Warning: Docx formating template "'..div.attr.attributes['custom-style']..'" is not handled by Pandoc Lua filter!')
                     return div.content
                 end
                 -- set figure label
@@ -243,11 +200,64 @@ function Writer (doc, opts)
 
     -- debugPrint(d.meta, "d.meta")
     -- debugPrint(doc.meta, "doc.meta")
-
+    
     local jats = pandoc.write(d, 'jats+element_citations', opts)
     
     return jats
 end
+-- Data processing functions --
+
+function extrcatAuthorNames(div)
+    -- because we are concatenating strings later we need to initialize them
+    authorArray = {
+        surname = "",
+        ["given-names"] = "",
+        email = "",
+        affiliation = {},
+        ["cor-id"] = ""
+    }
+    sep = ""
+    authors = {}
+    for i, item in ipairs(div.content[1].content) do
+        if item ~= pandoc.Space() then
+            -- if its a Superscript it should be the affiliation value
+            -- it should also be the end of the authors name
+            if item.t == "Superscript" then
+                for a, aff in ipairs(item.content) do
+                    if aff ~= pandoc.Space() then
+                        dummy = (aff.text):gsub(",", "")
+                        table.insert(authorArray.affiliation, dummy)
+                    end
+                end
+                table.insert(authors, authorArray)
+                authorArray = {
+                    surname = "",
+                    ["given-names"] = "",
+                    email = "",
+                    affiliation = {},
+                    ["cor-id"] = ""
+                }
+                sep = ""
+            else
+                -- if its not Superscript it should be a string we can parse for the name
+                if item.t == "Str" then
+                    local separators = Set({",","&"})
+                    if separators[item.text] then
+                        -- skip separator characters
+                    else
+                        -- copy author name, we expect the last name to be the surname
+                        authorArray["given-names"] = authorArray["given-names"]..sep..authorArray.surname
+                        authorArray.surname = item.text
+                        sep = " "
+                    end
+                end
+            end
+        end
+    end
+    return authors
+end
+
+-- Helper functions ---
 
 function Set(list)
     local set = {}
