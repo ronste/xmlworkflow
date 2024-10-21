@@ -25,12 +25,42 @@ function Writer (doc, opts)
                     processStyles['citationSuggestion'],
                     -- processStyles['bookPart'] -- Bits book-part tag
                 })
+                styleRegEx = Table2Array(doc.meta.styleRegEx)
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
                     debugPrint(div.attr.attributes['custom-style'],"Evaluating")
                     -- Author Names, ...
                     if (div.attr.attributes['custom-style'] == processStyles['authorNames']) then
-                        doc.meta.author = extrcatAuthorNames(div)
+                        -- if a regex is provided for this style use it, otherwise use default scheme 
+                        if styleRegEx['authorNames'] then
+                            text = pandoc.utils.stringify(div.content[1].content)
+                            debugPrint(text, "GMATCH")
+                            -- text = string.gmatch(pandoc.utils.stringify(div.content[1].content),styleRegEx['authorNames'])
+                            -- givenname, familyname, affiliation, orcid = string.gmatch(text, "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)")
+
+                            -- "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)"
+                            -- for word in string.gmatch(text, "([^%s]+)") do
+                            --     debugPrint(word,"XXX: ")
+                            -- end
+
+                            local rex = require("rex_pcre")
+                            pattern = [[(.*)\s(\S+)\s\((.*),.*\s+(\S+)\)]]
+
+                            vorname, nachname, aff, orcid = rex.match(text,pattern)
+                            debugPrint(vorname,"REX: ")
+                            debugPrint(nachname,"REX: ")
+                            debugPrint(aff,"REX: ")
+                            debugPrint(orcid,"REX: ")
+
+                            -- debugPrint(givenname(), "givenname")
+                            -- for givenname, familyname, affiliation, orcid in string.gmatch(text, "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)") do
+                                
+                            --     debugPrint(givenname, "givenname")
+                            -- end
+                        
+                        else
+                            doc.meta.author = extrcatAuthorNames(div)
+                        end
                     end
                     -- Author Affiliations
                     if (div.attr.attributes['custom-style'] == processStyles['affiliations']) then
@@ -59,7 +89,6 @@ function Writer (doc, opts)
                     end
                     -- Title
                     if (div.attr.attributes['custom-style'] == processStyles['title']) then
-                        debugPrint(div.content[1].content, "EXTRACTED TITLE:")
                         doc.meta.title = div.content[1].content
                     end
                     -- Subject (Article, Editorial, ...)
@@ -280,10 +309,10 @@ function debugPrint(item, label)
     local keyset={}
     local n=0
 
-    print("### "..label.." => "..type(item)..":"..pandoc.utils.type(item).." ###")
-    local label = "  "..label
+    local label = "[INFO] "..label
 
     if type(item) ~= "string" then
+        print(label.." => "..type(item)..":"..pandoc.utils.type(item).." ###")
         for k,v in pairs(item) do
             n=n+1
             keyset[n]=k
