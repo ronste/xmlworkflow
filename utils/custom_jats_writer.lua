@@ -17,6 +17,7 @@ function Writer (doc, opts)
                     processStyles['abstract'],
                     processStyles['authorNames'],
                     processStyles['affiliations'],
+                    processStyles['orcid'],
                     processStyles['corresp'],
                     processStyles['keywords'],
                     processStyles['subject'], -- equals sections in OJS
@@ -25,7 +26,11 @@ function Writer (doc, opts)
                     processStyles['citationSuggestion'],
                     -- processStyles['bookPart'] -- Bits book-part tag
                 })
-                styleRegEx = Table2Array(doc.meta.styleRegEx)
+                if doc.meta.styleRegEx then
+                    styleRegEx = Table2Array(doc.meta.styleRegEx)
+                else
+                    styleRegEx = table
+                end
                 -- process custom metadata styles taken from docx
                 if styles[div.attr.attributes['custom-style']] then
                     debugPrint(div.attr.attributes['custom-style'],"Evaluating")
@@ -33,31 +38,22 @@ function Writer (doc, opts)
                     if (div.attr.attributes['custom-style'] == processStyles['authorNames']) then
                         -- if a regex is provided for this style use it, otherwise use default scheme 
                         if styleRegEx['authorNames'] then
+                            if doc.meta.author then
+                                authorCount = authorCount + 1
+                            else
+                                authors = {}
+                            end
+                            authorArray = authorArrayTemplate
+
                             text = pandoc.utils.stringify(div.content[1].content)
-                            debugPrint(text, "GMATCH")
-                            -- text = string.gmatch(pandoc.utils.stringify(div.content[1].content),styleRegEx['authorNames'])
-                            -- givenname, familyname, affiliation, orcid = string.gmatch(text, "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)")
+                            local givenname, familyname = text:match(styleRegEx['authorNames'])
 
-                            -- "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)"
-                            -- for word in string.gmatch(text, "([^%s]+)") do
-                            --     debugPrint(word,"XXX: ")
-                            -- end
+                            authorArray["given-names"] = givenname
+                            authorArray.surname = familyname
+                            authorArray.affiliation = authorCount
 
-                            local rex = require("rex_pcre")
-                            pattern = [[(.*)\s(\S+)\s\((.*),.*\s+(\S+)\)]]
-
-                            vorname, nachname, aff, orcid = rex.match(text,pattern)
-                            debugPrint(vorname,"REX: ")
-                            debugPrint(nachname,"REX: ")
-                            debugPrint(aff,"REX: ")
-                            debugPrint(orcid,"REX: ")
-
-                            -- debugPrint(givenname(), "givenname")
-                            -- for givenname, familyname, affiliation, orcid in string.gmatch(text, "([^%s]+)%s([^%s]+)%s%(([^,]+),%s+([^%s]+)%)") do
-                                
-                            --     debugPrint(givenname, "givenname")
-                            -- end
-                        
+                            table.insert(authors, authorArray)
+                            doc.meta.author = authors
                         else
                             doc.meta.author = extrcatAuthorNames(div)
                         end
@@ -65,9 +61,16 @@ function Writer (doc, opts)
                     -- Author Affiliations
                     if (div.attr.attributes['custom-style'] == processStyles['affiliations']) then
                         affiliationArray = {}
-                        if div.content[1].content[1].t == "Superscript" then
-                            affiliationArray["id"] = pandoc.utils.stringify(div.content[1].content:remove(1))
-                            affiliationArray["organization"] = pandoc.utils.stringify(div.content[1].content)
+                        if styleRegEx['affiliations'] then
+                            text = pandoc.utils.stringify(div.content[1].content)
+                            local affiliation = text:match(styleRegEx['affiliations'])
+                            affiliationArray["organization"] = affiliation
+                            affiliationArray["id"] = authorCount
+                        else
+                            if div.content[1].content[1].t == "Superscript" then
+                                affiliationArray["id"] = pandoc.utils.stringify(div.content[1].content:remove(1))
+                                affiliationArray["organization"] = pandoc.utils.stringify(div.content[1].content)
+                            end
                         end
                         table.insert(opts.variables.affiliation, affiliationArray)
                     end
@@ -85,6 +88,16 @@ function Writer (doc, opts)
                             if string.find(pandoc.utils.stringify(div.content[1].content), v.surname) then
                                 v["cor-id"] = 1
                             end
+                        end
+                    end
+                    -- Orcid
+                    if (div.attr.attributes['custom-style'] == processStyles['orcid']) then
+                        if styleRegEx['orcid'] then
+                            text = pandoc.utils.stringify(div.content[1].content)
+                            local orcid = text:match(styleRegEx['orcid'])
+                            authorArray["orcid"] = orcid
+                        else
+                            -- not implemented
                         end
                     end
                     -- Title
@@ -107,18 +120,26 @@ function Writer (doc, opts)
                             doc.meta.abstract = nil
                         end
                     end
-                    -- keywords
+                    -- Keywords
                     if (div.attr.attributes['custom-style'] == processStyles['keywords']) then
+                        debugPrint(div.attr.attributes['custom-style'],"Evaluating")
                         if (doc.meta.keywordsLabel == nil) then
                             doc.meta['kwd-label'] = div.attr.attributes['custom-style']
                         else
                             doc.meta['kwd-label'] = pandoc.utils.stringify(doc.meta.keywordsLabel)
                         end
                         if (pandoc.utils.stringify(div.content[1].content[1]) ~= processStyles['keywords']) then
-                            -- split keyword(tag) string at ',' or ';' and remove trailing and leading spaces
+                            if styleRegEx['keywords'] then
+                                pattern = styleRegEx['keywords']
+                            else
+                                -- split keyword(tag) string at ',' or ';' and remove trailing and leading spaces
+                                pattern = "%s*([^,;]+)%s*"
+                            end
+                            debugPrint(pandoc.utils.stringify(div.content[1].content),"KEYWORDS")
                             tags = {}
                             local i = 1
-                            for tag in string.gmatch(pandoc.utils.stringify(div.content[1].content), "%s*([^,;]+)%s*") do
+                            for tag in string.gmatch(pandoc.utils.stringify(div.content[1].content), pattern) do
+                                print(tag)
                                 tags[i] = tag
                                 i = i + 1
                             end
@@ -223,7 +244,16 @@ function Writer (doc, opts)
     figCount = 0;
     tableCount = 0;
     chapterCount = 0;
+    authorCount = 0;
     opts.variables.affiliation = {}
+    authorArrayTemplate = {
+        surname = "",
+        ["given-names"] = "",
+        email = "",
+        affiliation = {},
+        ["cor-id"] = "",
+        ["orcid"] = ""
+    }
     
     d = doc:walk(filter)
 
@@ -238,13 +268,7 @@ end
 
 function extrcatAuthorNames(div)
     -- because we are concatenating strings later we need to initialize them
-    authorArray = {
-        surname = "",
-        ["given-names"] = "",
-        email = "",
-        affiliation = {},
-        ["cor-id"] = ""
-    }
+    authorArray = authorArrayTemplate
     sep = ""
     authors = {}
     for i, item in ipairs(div.content[1].content) do
@@ -259,13 +283,7 @@ function extrcatAuthorNames(div)
                     end
                 end
                 table.insert(authors, authorArray)
-                authorArray = {
-                    surname = "",
-                    ["given-names"] = "",
-                    email = "",
-                    affiliation = {},
-                    ["cor-id"] = ""
-                }
+                authorArray = authorArrayTemplate
                 sep = ""
             else
                 -- if its not Superscript it should be a string we can parse for the name
@@ -290,7 +308,11 @@ end
 
 function Set(list)
     local set = {}
-    for _, l in ipairs(list) do set[l] = true end
+    for _, l in pairs(list) do
+        if l ~= nil then 
+            set[l] = true
+        end
+    end
     return set
 end
 
@@ -311,7 +333,7 @@ function debugPrint(item, label)
 
     local label = "[INFO] "..label
 
-    if type(item) ~= "string" then
+    if ((type(item) ~= "string") and (type(item) ~= "boolean") and (item ~= nil) and (type(item) ~= "number")) then
         print(label.." => "..type(item)..":"..pandoc.utils.type(item).." ###")
         for k,v in pairs(item) do
             n=n+1
@@ -340,6 +362,10 @@ function debugPrint(item, label)
     return keyset
 end
 
-function debugPrintString(item, label) 
-    print(label..": "..pandoc.utils.type(item)..": "..pandoc.utils.stringify(item))
+function debugPrintString(item, label)
+    if item == nil then
+        print(label..":nil:nil")
+    else
+        print(label..": "..pandoc.utils.type(item)..": "..pandoc.utils.stringify(item))
+    end
 end

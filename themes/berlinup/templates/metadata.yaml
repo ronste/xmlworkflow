@@ -66,8 +66,13 @@ processStyles:
 styleRegEx:
   # example paragraph holding author information:
   # firstname secondname lastname (affiliation,   https://orcid.org/0000-0000-0000-0001)
-  # regex: "/(?<givenname>.*)\s(?<familyname>\S+)\s\((?<affiliation>.*),.*\s+(?<orcid>\S+)\)/mg"
-  authorNames: '/(?\<givenname\>.*)\s(?\<familyname\>\S+)\s\(.*\)/mg'
+  # PCRE regex: "/(?<givenname>.*)\s(?<familyname>\S+)\s\((?<affiliation>.*),.*\s+(?<orcid>\S+)\)/mg"
+  # Note: The lua pcre library would have to be statically lined because pandoc lua filter does not support dynamic linking. This would require to compile pandoc from source. Therefore currently str:gmatch is used.
+  # lua str:gmatch: "^(.-)%s+(%S+)%s*%("
+  authorNames: '^(.-)%s+(%S+)%s*%('
+  affiliations: "%((.-)%,.-%)"
+  orcid: "%(.-%,.-(http.-)%)"
+  keywords: "%w+"
 ignoreStyles:
 # this defines docx format templates to ignore
 - Zeitschriften-Logo
@@ -83,6 +88,6 @@ ignoreStyles:
 - Bibliography
 tableLabel: "Tabelle"
 figureLabel: "Abbildung"
-keywordsLabel: "Schlagwörter"
+keywordsLabel: "Keywords"
 citationSuggestionLabel: "Zitiervorschlag"
 ...
