@@ -37,16 +37,16 @@ pandoc- xml-mode=xml-mode: _default
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
   echo "Elapsed Time: $SECONDS seconds"
 
-# Generate PDF using Pandoc
+# Generate PDF using Pandoc & Weasyprint
 [no-cd, private]
 pandoc-pdf- pandoc_from=pandoc_from: _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
-  echo -e "{{hcs}}Converting {{pandoc_from}} to PDF with Pandoc ...{{nc}}"
+  echo -e "{{hcs}}Converting {{pandoc_from}} to PDF with Pandoc & Weasyprint ...{{nc}}"
   pandoc "$WORK_PATH/buffer.{{pandoc_from}}" -s \
     -f {{ if pandoc_from == "html" { "html" } else { "jats" } }} \
-    --pdf-engine=pdflatex \
+    --pdf-engine=weasyprint \
     --template="$DEFAULT_TEMPLATE_PATH/pdf_template_pandoc.tex" \
     --metadata-file="$METADATA_PATH/metadata.yaml" \
     -t pdf \

@@ -18,7 +18,7 @@ mathjax-: _default
   set -euo pipefail
   source ~/.bashrc
   echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
-  docx_file="{{docx-file}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{html-file}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  docx_file="{{docx-file}}" && cd $LIB_PATH && node -r esm "$UTILS_PATH/mml2chtml-page" "$WORK_PATH/{{html-file}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
   cp "$WORK_PATH/{{docx-file}}_mathjax.html" "$WORK_PATH/{{buffer-html-file}}"
   echo "Elapsed Time: $SECONDS seconds"
 

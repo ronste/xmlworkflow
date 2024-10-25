@@ -15,6 +15,6 @@ services:
       - ./work:/root/xmlworkflow/work
       - ./justfile:/root/xmlworkflow/justfile
       - ./.env:/root/xmlworkflow/.env
-      - ./utils/mml2chtml-page:/root/xmlworkflow/lib/mml2chtml-page
+      - ./utils/mml2chtml-page:/root/xmlworkflow/utils/mml2chtml-page
       - ./justfiles:/root/xmlworkflow/justfiles
       - ./store:/root/xmlworkflow/store

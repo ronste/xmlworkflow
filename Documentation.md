@@ -84,6 +84,8 @@ ignoreStyles:
 
 Note that, although the docx document template may contain formating templates with metadata not provided by the author. This type of journal metadata should usually not be read from the docx document but rather from the metadata.yaml file directly. Formating templates like these should be on the ignore list.
 
+In addition, if a file `articleMetadata.yaml` is found in the working directory it will be used on top of the `themes/<selected theme>/templates/metadata.yaml` file to provide article level metadata. Here you can include and metadata not included in the docx, e.g. the article DOI, heading field (like "Editorial" or "Research Article") or article specific categories.
+
 ### Saxon HE 12
 
 ### Pagedjs & Pagedjs-cli

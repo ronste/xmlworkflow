@@ -129,6 +129,7 @@ RUN set -xe && cd root \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx \
     && echo "complete -W '$(processDocx --summary)' processDocx" >> ~/.bashrc \
+    && chmod +x /root/xmlworkflow/utils/run_tests.sh \
     && processDocx reset-jats-example
 
 WORKDIR /root/xmlworkflow/work
