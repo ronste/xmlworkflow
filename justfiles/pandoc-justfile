@@ -28,6 +28,7 @@ pandoc- xml-mode=xml-mode: _default
     -f docx+styles+citations \
     --extract-media="." \
     --metadata-file="$METADATA_PATH/metadata.yaml" \
+    {{ if articleMetadata == "true" { "--metadata-file='articleMetadata.yaml'" } else { "" } }} \
     --citeproc \
     --template $UTILS_PATH/{{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }} \
     -t "$UTILS_PATH/custom_jats_writer.lua" \

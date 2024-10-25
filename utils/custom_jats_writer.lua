@@ -1,4 +1,5 @@
 -- Lua string.gmatch regex patterns: https://www.fhug.org.uk/kb/kb-article/understanding-lua-patterns/
+-- Lua lrexlib: https://rrthomas.github.io/lrexlib/manual.html
 function Writer (doc, opts)
     local filter = {
         Div = function (div)
@@ -15,6 +16,7 @@ function Writer (doc, opts)
                 local styles = Set({
                     processStyles['title'],
                     processStyles['abstract'],
+                    processStyles['abstractTitle'],
                     processStyles['authorNames'],
                     processStyles['affiliations'],
                     processStyles['orcid'],
@@ -24,6 +26,7 @@ function Writer (doc, opts)
                     processStyles['table-turn-right'],
                     processStyles['table-turn-left'],
                     processStyles['citationSuggestion'],
+                    processStyles['namedContent']
                     -- processStyles['bookPart'] -- Bits book-part tag
                 })
                 if doc.meta.styleRegEx then
@@ -43,16 +46,18 @@ function Writer (doc, opts)
                             else
                                 authors = {}
                             end
-                            authorArray = authorArrayTemplate
+                            authorArray = shallowCopy(authorArrayTemplate)
 
-                            text = pandoc.utils.stringify(div.content[1].content)
-                            local givenname, familyname = text:match(styleRegEx['authorNames'])
+                            pattern = lrexlib.new(styleRegEx['authorNames'])
+                            local _,_,results = pattern:exec(pandoc.utils.stringify(div.content[1].content))
 
-                            authorArray["given-names"] = givenname
-                            authorArray.surname = familyname
+                            authorArray["given-names"] = results.givenname
+                            authorArray.surname = results.familyname
                             authorArray.affiliation = authorCount
-
+                            authorArray.affiliationText = results.affiliation
+                            authorArray["orcid"] = results.orcid
                             table.insert(authors, authorArray)
+
                             doc.meta.author = authors
                         else
                             doc.meta.author = extrcatAuthorNames(div)
@@ -61,10 +66,8 @@ function Writer (doc, opts)
                     -- Author Affiliations
                     if (div.attr.attributes['custom-style'] == processStyles['affiliations']) then
                         affiliationArray = {}
-                        if styleRegEx['affiliations'] then
-                            text = pandoc.utils.stringify(div.content[1].content)
-                            local affiliation = text:match(styleRegEx['affiliations'])
-                            affiliationArray["organization"] = affiliation
+                        if styleRegEx['authorNames'] then
+                            affiliationArray["organization"] = authorArray.affiliationText
                             affiliationArray["id"] = authorCount
                         else
                             if div.content[1].content[1].t == "Superscript" then
@@ -90,16 +93,6 @@ function Writer (doc, opts)
                             end
                         end
                     end
-                    -- Orcid
-                    if (div.attr.attributes['custom-style'] == processStyles['orcid']) then
-                        if styleRegEx['orcid'] then
-                            text = pandoc.utils.stringify(div.content[1].content)
-                            local orcid = text:match(styleRegEx['orcid'])
-                            authorArray["orcid"] = orcid
-                        else
-                            -- not implemented
-                        end
-                    end
                     -- Title
                     if (div.attr.attributes['custom-style'] == processStyles['title']) then
                         doc.meta.title = div.content[1].content
@@ -120,6 +113,12 @@ function Writer (doc, opts)
                             doc.meta.abstract = nil
                         end
                     end
+                    -- Abstract title
+                    if (div.attr.attributes['custom-style'] == processStyles['abstractTitle']) then
+                        -- set specific use to "abstractTitle", will be handled by xsl
+                        div.attr.attributes['specific-use'] = "abstractTitle"
+                        return div
+                    end
                     -- Keywords
                     if (div.attr.attributes['custom-style'] == processStyles['keywords']) then
                         debugPrint(div.attr.attributes['custom-style'],"Evaluating")
@@ -130,16 +129,17 @@ function Writer (doc, opts)
                         end
                         if (pandoc.utils.stringify(div.content[1].content[1]) ~= processStyles['keywords']) then
                             if styleRegEx['keywords'] then
-                                pattern = styleRegEx['keywords']
+                                pattern = lrexlib.new(styleRegEx['keywords'])
                             else
                                 -- split keyword(tag) string at ',' or ';' and remove trailing and leading spaces
-                                pattern = "%s*([^,;]+)%s*"
+                                pattern = lrexlib.new('\\s*([^,;]+)\\s*')
                             end
-                            debugPrint(pandoc.utils.stringify(div.content[1].content),"KEYWORDS")
+                            
+                            local results = lrexlib.gmatch(pandoc.utils.stringify(div.content[1].content), pattern)
+
                             tags = {}
                             local i = 1
-                            for tag in string.gmatch(pandoc.utils.stringify(div.content[1].content), pattern) do
-                                print(tag)
+                            for tag in results do
                                 tags[i] = tag
                                 i = i + 1
                             end
@@ -151,7 +151,13 @@ function Writer (doc, opts)
                         if (doc.meta.citationSuggestionLabel == nil) then
                             doc.meta['citationSuggestionLabel'] = div.attr.attributes['custom-style']
                         end
-                        doc.meta['citationSuggestion'] = "TO BE IMPLEMENTED ON REQUEST"
+                        doc.meta['citationSuggestion'] = pandoc.utils.stringify(div.content)
+
+                        -- scan citation suggestion for a DOI
+                        local doi = lrexlib.match(pandoc.utils.stringify(div.content),'(https?:\\/\\/doi\\.org\\/.*)\\s?')
+                        if doi then
+                            doc.meta.article.doi = doi
+                        end
                     end
                     -- handle table rotation styles
                     if (div.attr.attributes['custom-style'] == processStyles['table-turn-right']) then
@@ -234,17 +240,37 @@ function Writer (doc, opts)
                 return span
             end
         end,
+        Str = function (elem)
+            if (elem.text == "&") then
+            -- Replace XML characters with their corresponding entities
+            local replacements = {
+              ["&lt;"] = "<",
+              ["&gt;"] = ">",
+              ["&amp;"] = "&",
+              ["&quot;"] = '"',
+              ["&apos;"] = "'"
+            }
+          
+            for entity, char in pairs(replacements) do
+              elem.text = elem.text:gsub(char, entity)
+            end
+        end
+            return elem
+          end,
         
         Meta = function(meta)
             meta = doc.meta
             return meta
         end
     }
+
+    lrexlib = require("rex_pcre")
+    flags = lrexlib.flags()
     
     figCount = 0;
     tableCount = 0;
     chapterCount = 0;
-    authorCount = 0;
+    authorCount = 1;
     opts.variables.affiliation = {}
     authorArrayTemplate = {
         surname = "",
@@ -268,7 +294,8 @@ end
 
 function extrcatAuthorNames(div)
     -- because we are concatenating strings later we need to initialize them
-    authorArray = authorArrayTemplate
+    authorArray = shallowCopy(authorArrayTemplate)
+    debugPrint(authorArray,"AUTHORARRAY::IN")
     sep = ""
     authors = {}
     for i, item in ipairs(div.content[1].content) do
@@ -283,7 +310,8 @@ function extrcatAuthorNames(div)
                     end
                 end
                 table.insert(authors, authorArray)
-                authorArray = authorArrayTemplate
+                authorArray = shallowCopy(authorArrayTemplate)
+                debugPrint(authorArray,"AUTHORARRAY::NEW")
                 sep = ""
             else
                 -- if its not Superscript it should be a string we can parse for the name
@@ -325,6 +353,31 @@ function Table2Array(table)
         buffer[k] = pandoc.utils.stringify(v)
     end
     return buffer
+end
+
+-- Function to create a shallow copy of an array template
+function shallowCopy(original)
+    local copy = {}
+    for key, value in pairs(original) do
+        if (type(value) == "table") then
+            copy[key] = {}
+        else
+            copy[key] = value
+        end
+    end
+    return copy
+end
+
+function encode_html_entities(str)
+    local entities = {
+        ["&"] = "&amp;",
+        ["<"] = "&lt;",
+        [">"] = "&gt;",
+        ["\""] = "&quot;",
+        ["'"] = "&apos;"
+    }
+    
+    return (str:gsub("[&<>\"]", entities))
 end
 
 function debugPrint(item, label)

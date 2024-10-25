@@ -38,6 +38,7 @@ validate := 'false'
 develop := 'false'
 pandoc_from := 'xml'
 pagedjs-polyfill := 'false'
+articleMetadata := `if [ -e "$WORK_PATH/articleMetadata.yaml" ]; then echo "true"; else echo "false"; fi`
 
 # path variables
 develop_html_fragment := '$(echo "/<head/ r "$XSL_PATH/html_fragment_develop.html"")'

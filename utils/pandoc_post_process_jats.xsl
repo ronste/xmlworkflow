@@ -106,7 +106,20 @@
         <xsl:value-of select="." disable-output-escaping="yes"/>
     </xsl:template>
 
-    <!-- remove all tags already handle in custom lua writer -->
+    <!-- handle abstract title (not available in pandoc) -->
+    <xsl:template match="abstract">
+        <abstract>
+            <title>
+                <xsl:value-of select="//boxed-text[@specific-use='abstractTitle']/p"></xsl:value-of>
+            </title>
+            <p>
+                <xsl:value-of select="."/>
+            </p>
+        </abstract>
+    </xsl:template>
+    <xsl:template match="boxed-text[@specific-use='abstractTitle']"></xsl:template>
+
+    <!-- remove all tags already handled in custom lua writer -->
     <xsl:template match="boxed-text[@specific-use='REMOVE']"></xsl:template>
 
 </xsl:stylesheet>

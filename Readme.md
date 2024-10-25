@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.4 (5.6.2024)
+- Version: 1.4.1 (25.10.2024)
 - Developed by: Ronald Steffen
 
 ---

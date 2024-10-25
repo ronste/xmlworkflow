@@ -1,93 +1,59 @@
 ---
 # https://pandoc.org/jats.html
 link-citations: true
-tags: [dummy tag 1, dummy tag 2]
+tags: [dummy keyword 1, dummy keyword 2]
 article:
   type: research-article
   publisher-id: berlinup
   doi: 10.1234/dummy.doi
-  heading: dummy article type
-  categories:
-  - Muster Katergorie A
-  - Muster Katergorie B
-  author-notes:
-    conflict: "Conflict of interest"
-    con: "Contributed-by information."
-    corresp:
-      - id: 1
-        email: corrsep@email.de
+  heading: Demo Artikel
   volume: 0
   issue: 0
 journal:
   publisher-id: berlinup
   publisher-name: Berlin Universities Publishing
   publisher-loc: Berlin, Germany
-  title: Zeitschrift für Testologie
+  title: Berlin Universities Publishing Modellzeitschrift
   eissn: 0000-1111
   pissn: 1544-9173
-history:
-  - event: received
-    day: 1
-    month: Januar
-    year: 1900
-  - event: accepted
-    day: 2
-    month: Januar
-    year: 1900
 date:
-  day: 3
+  day: 11
   month: Januar
   year: 1900
 copyright:
-  holder: Dummy Copyright Holder
-  year: 2022
+  holder: Copyright (c) 2021 BerlinUP Modellzeitschrift
 license:
-  text: "Dieses Werk steht unter einer Dummy-Lizenz"
+  text: "Dieses Werk steht unter der Lizenz Creative Commons Namensnennung 4.0 International."
   type: open-access
   link: http://creativecommons.org/licenses/by/4.0/
-citationSuggestion: 'Mustermann, M. and Musterfrau, M. (\<bold\>2022\<\/bold\>). Experimentelle Fallstudie: Erste Ergebnisse. \<italic\>Zeitschrift für Testologie 12(3)\<\/italic\>, S. 1-2. https://doi.org/10.1234/berlinup.v12i3.1'
 geometry: margin=2cm
 references:
 processStyles:
   # this maps jats tags to docx format templates
   title: "BerlinUP Main Title"
   abstract: "BerlinUP Abstract"
+  abstractTitle: "BerlinUP Abstract Heading"
   keywords: "BerlinUP Keywords"
-  # subject: Rubrik
   authorNames: "BerlinUP Author"
   affiliations: "BerlinUP Author"
   orcid: "BerlinUP Author"
-  # corresp: "Corresponding Author"
-  # table-turn-right: "Tabelle-gedreht-rechts"
-  # table-turn-left: "Tabelle-gedreht-links"
-  table-caption: "Beschriftung Tabelle"
-  figure-caption: "Beschriftung Abbildung"
-  # citationSuggestion: "Zitiervorschlag"
+  citationSuggestion: "BerlinUP Citation Suggestion"
 styleRegEx:
+  # https://regex101.com/
   # example paragraph holding author information:
-  # firstname secondname lastname (affiliation,   https://orcid.org/0000-0000-0000-0001)
+  # "firstname secondname lastname (affiliation,   https://orcid.org/0000-0000-0000-0001)"
   # PCRE regex: "/(?<givenname>.*)\s(?<familyname>\S+)\s\((?<affiliation>.*),.*\s+(?<orcid>\S+)\)/mg"
-  # Note: The lua pcre library would have to be statically lined because pandoc lua filter does not support dynamic linking. This would require to compile pandoc from source. Therefore currently str:gmatch is used.
-  # lua str:gmatch: "^(.-)%s+(%S+)%s*%("
-  authorNames: '^(.-)%s+(%S+)%s*%('
-  affiliations: "%((.-)%,.-%)"
-  orcid: "%(.-%,.-(http.-)%)"
-  keywords: "%w+"
+  # special characters with meaning in markdown need to be escaped by '\', e.g. '\', '<', '>' or '*'
+  authorNames: '(?\<givenname\>.\*)\\s(?\<familyname\>\\S+)\\s\\((?\<affiliation\>.\*),.\*\\s+(?\<orcid\>\\S+)\\)'
+  # example paragraph holding keywords:
+  # Keywords: Keyword A, Keyword B, Keyword C
+  # /(?:.*:|)\s*([^,]+)\s*(?:,\s*|$)/gm
+  keywords: '(?:.\*:|)\\s\*([^,]+)\\s\*(?:,\\s\*|$)'
 ignoreStyles:
 # this defines docx format templates to ignore
-- Zeitschriften-Logo
-- ISSN
-- Zeitschriftentitel
-- Ausgabe
-- Autor*in E-Mail
-- Datum Einreichung
-- Datum Annahme
-- Datum Publikation
-- Lizenzinformationen
-- Zitiervorschlag
-- Bibliography
+- Dummystyle
 tableLabel: "Tabelle"
 figureLabel: "Abbildung"
 keywordsLabel: "Keywords"
-citationSuggestionLabel: "Zitiervorschlag"
+# citationSuggestionLabel: "Zitiervorschlag"
 ...

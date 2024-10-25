@@ -47,6 +47,8 @@ ENV TOOLS_PACKAGES_2 \
     liblua5.4-dev \
     lua5.4 \
     libreadline-dev \
+    libpcre3 \
+    libpcre3-dev \
     pipx \ 
     # for pagedjs/chromium/pupeteer
     libxkbcommon-x11-0
@@ -85,9 +87,19 @@ RUN set -xe && cd root \
     ## docx2jats
     && git clone https://github.com/Vitaliy-1/docxToJats.git \
     # Pandoc
-    && arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
-    && wget https://github.com/jgm/pandoc/releases/download/3.1.12.2/pandoc-3.1.12.2-linux-${arch}.tar.gz \
-    && tar xvzf pandoc-3.1.12.2-linux-${arch}.tar.gz --strip-components 1 -C /usr/local/ \
+    # Install pandoc from source to support dynamic linking of lrexlib-pcre
+    && wget https://hackage.haskell.org/package/pandoc-3.5/pandoc-3.5.tar.gz \
+    && tar xvzf pandoc-3.5.tar.gz \
+    && cd pandoc-3.5 \
+    && curl -sSL https://get.haskellstack.org/ | sh \
+    && curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh \
+    && . /root/.ghcup/env \
+    && cabal update \
+    && cabal install pandoc-cli \
+    && cd .. \
+    && echo 'export PATH="$HOME/.cabal/bin:$PATH"' >> ~/.bashrc \
+    && rm -rf pandoc-3.5
+RUN set -xe && cd root \
     # Saxon-HE
     # Note: Current Debian Saxon-HE package is verion 9.9 !!!
     && wget https://github.com/Saxonica/Saxon-HE/releases/download/SaxonHE12-4/SaxonHE12-4J.zip \
@@ -103,16 +115,20 @@ RUN set -xe && cd root \
     && cd luarocks-3.9.2 \
     && ./configure && make && sudo make install \
     && luarocks install xml2lua \
+    && luarocks install lrexlib-pcre \
     && eval "$(luarocks path)" \
     && cd .. \
     ## clean up
-    && rm pandoc-3.1.12.2-linux-${arch}.tar.gz SaxonHE12-4J.zip luarocks-3.9.2.tar.gz \
+    # && rm pandoc-3.1.12.2-linux-${arch}.tar.gz \
+    && rm SaxonHE12-4J.zip luarocks-3.9.2.tar.gz \
     ## just
     && npm install -g just-install \
-    # create an alias for the just command
+    # create an alias for the just command and set cli completion
     && echo '#!/usr/bin/env bash' >> /bin/processDocx \
     && echo "cd /root/xmlworkflow/work" \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx \
-    && processDocx reset-example
+    && echo "complete -W '$(processDocx --summary)' processDocx" >> ~/.bashrc \
+    && processDocx reset-jats-example
 
+WORKDIR /root/xmlworkflow/work

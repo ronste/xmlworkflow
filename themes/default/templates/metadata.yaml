@@ -26,7 +26,7 @@ abstract: |
   Dummy Abstract
   With two paragraphs.
 link-citations: true
-tags: [dummy tag 1, dummy tag 2]
+tags: [dummy keyword 1, dummy keyword 2]
 article:
   type: research-article
   publisher-id: berlinup
@@ -35,6 +35,7 @@ article:
   categories:
   - Muster Katergorie A
   - Muster Katergorie B
+  - Muster mit & Zeichen
   author-notes:
     conflict: "Conflict of interest"
     con: "Contributed-by information."
