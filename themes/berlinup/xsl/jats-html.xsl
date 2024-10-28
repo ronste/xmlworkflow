@@ -314,50 +314,51 @@ or pipeline) parameterized.
   <xsl:template match="front | front-stub">
     <section id="journal-header">
       <div id="header">
-        <div style="display: inline-block;">
+        <div id="journal-logo">
           <img alt="" id="journal_logo" src="media/journal_logo.png" height="50px"></img>
-          <p>
+          <!-- <p>
             <strong>
               <xsl:value-of select="//journal-title" /> - Band <xsl:value-of
                 select="//article-meta/volume" />, Ausgabe <xsl:value-of
                 select="//article-meta/issue" />
             </strong>
-          </p>
+          </p> -->
         </div>
-        <div id="publisher_logo" style="float: right">
+        <!-- <div id="publisher_logo" style="float: right">
           <img alt="" src="media/publisher_logo.png" height="40px"></img>
-        </div>
+        </div> -->
       </div>
 
-      <div id="subject-heading" style="display: block;">
+      <!-- <div id="subject-heading" style="display: block;">
         <xsl:apply-templates select="//subj-group[@subj-group-type='heading']/subject" />
-      </div>
+      </div> -->
     </section>
 
     <section id="article-metadata" class="part-rule-bottom">
       <!-- change context to front/article-meta (again) -->
       <xsl:for-each select="article-meta | self::front-stub">
 
-        <div id="contributer-metadata" class="part-rule-bottom">
-          <div class="metadata centered">
+        
+          <div class="metadata">
             <xsl:apply-templates mode="metadata" select="title-group" />
           </div>
 
+        <div id="contributer-metadata" class="part-rule-bottom">
           <!-- contrib-group, aff, aff-alternatives, author-notes -->
           <div id="contrib_group_meta" class="metadata">
             <xsl:apply-templates mode="metadata" select="contrib-group" />
             <!-- back in article-meta or front-stub context -->
             <xsl:if test="aff | aff-alternatives | author-notes">
 
-              <div class="row">
+              <!-- <div class="row">
                 <div class="cell empty" />
                 <div class="cell">
-                  <div class="metadata-group contrib_group">
+                  <div class="metadata-group contrib_group"> -->
                     <xsl:apply-templates mode="metadata"
                       select="aff | aff-alternatives | author-notes" />
-                  </div>
+                  <!-- </div>
                 </div>
-              </div>
+              </div> -->
 
             </xsl:if>
           </div>
@@ -1397,9 +1398,10 @@ or pipeline) parameterized.
         (address | aff | author-comment | bio | email |
         ext-link | on-behalf-of | role | uri | xref)*) -->
     <!-- each contrib makes a row: name at left, details at right -->
-    <div id="contrib-names" class="row">
-      <xsl:for-each select="contrib">
-        <!--  content model of contrib:
+    
+    <xsl:for-each select="contrib">
+      <div id="contrib-names" class="row">
+            <!--  content model of contrib:
             ((contrib-id)*,
              (anonymous | collab | collab-alternatives | name | name-alternatives)*,
              (degrees)*,
@@ -1419,10 +1421,10 @@ or pipeline) parameterized.
                       ext-link | on-behalf-of | role | uri) -->
           </xsl:call-template>
         </div>
-      </xsl:for-each>
-    </div>
+      </div>
+    </xsl:for-each>
     <!-- end of contrib -->
-    <xsl:variable name="misc-contrib-data"
+    <!-- <xsl:variable name="misc-contrib-data"
       select="*[not(self::contrib | self::xref)]" />
     <xsl:if test="$misc-contrib-data">
       <div class="row">
@@ -1433,7 +1435,7 @@ or pipeline) parameterized.
           </div>
         </div>
       </div>
-    </xsl:if>
+    </xsl:if> -->
   </xsl:template>
 
 
@@ -1456,14 +1458,13 @@ or pipeline) parameterized.
             </xsl:if>
             <xsl:apply-templates select="." mode="metadata-inline" />
             <xsl:if test="position() = last()">
-              <xsl:apply-templates mode="metadata-inline"
-                select="degrees | xref" />
+              <xsl:apply-templates mode="metadata-inline" select="degrees | xref" />
               <!-- xrefs in the parent contrib-group go with the last member
               of *each* contrib in the group -->
-              <xsl:apply-templates mode="metadata-inline"
-                select="following-sibling::xref" />
-              <xsl:apply-templates mode="metadata-inline"
-                select="../contrib-id" />
+              <!-- <xsl:apply-templates mode="metadata-inline" select="following-sibling::xref" /> -->
+              <xsl:variable name="rid" select="../xref[@ref-type='aff']/@rid"/>
+              (<xsl:apply-templates mode="metadata-inline" select="//aff[@id=$rid]/institution" />,
+              <xsl:apply-templates mode="metadata-inline" select="../contrib-id" />)
             </xsl:if>
 
           </xsl:with-param>
@@ -1527,8 +1528,9 @@ or pipeline) parameterized.
       <xsl:value-of select='./text()' />
     </xsl:variable>
     <a href="{$orcid_url}">
-      <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
-        width="16" height="16"></img>
+      <xsl:value-of select="$orcid_url"/>
+      <!-- <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
+        width="16" height="16"></img> -->
     </a>
   </xsl:template>
 

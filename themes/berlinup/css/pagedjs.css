@@ -38,7 +38,7 @@
 
         /* show the title variable in the top right corner and move to right margin*/
         /* all used margin boxes span the full width of page, i.e. top-right when alone spans full body width*/
-        @top-right {
+        /* @top-right {
             content: string(journal-title);
             background-color: #3c6478;
             color: white;
@@ -48,7 +48,7 @@
             transform: rotate(-90deg) translate(-150mm, 58mm);
             text-align: center !important;
             align-items: center;
-        }
+        } */
     }
 
     @page:first {

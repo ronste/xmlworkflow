@@ -25,12 +25,15 @@ ENV DEV_PACKAGES_2 \
     python3 \
     pip \
     # for Saxon-HE
-    default-jre
+    default-jre \
+    rsync
 
 ENV DEV_PACKAGES_3 \
     # for pagedjs, Mathjax
     nodejs \
-    npm 
+    npm \
+    # to automatically sync css files while editing inside the container
+    inotify-tools
 
 # tools
 ENV TOOLS_PACKAGES \

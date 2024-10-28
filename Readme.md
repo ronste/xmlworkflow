@@ -12,7 +12,7 @@ This repo is intended as a proof-of-concept tool. In particular the templates re
 
 The tools included are:
 
-- [Pandoc](https://pandoc.org/) 3.1.12.2
+- [Pandoc](https://pandoc.org/) 3.5 (compiled from source to enable support for PCRE in lua)
 - [luarocks](https://luarocks.org/) 3.9.2
 - [Saxon HE 12 4J](https://www.saxonica.com/documentation12/documentation.xml)
 - [mathjax-full](https://www.mathjax.org/) 3.2.2
