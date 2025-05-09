@@ -41,7 +41,7 @@
     
     <!-- handle tables -->
     <!-- combine table caption, label and content into table-wrap !!! This should actually be handled by Pandoc !!! -->
-    <xsl:template match="//table-wrap">
+    <xsl:template match="//table-wrap[not(caption)]">
 
         <xsl:variable name="caption_before" select="preceding-sibling::*[1][local-name() = 'boxed-text' and starts-with(@specific-use, 'table')]"></xsl:variable>
         <xsl:variable name="caption_after" select="following-sibling::*[1][local-name() = 'boxed-text' and starts-with(@specific-use, 'table')]"></xsl:variable>
