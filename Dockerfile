@@ -19,6 +19,8 @@ ENV DEV_PACKAGES \
     php \
     php-zip \
     php-xml
+    # for pandoc pdf conversion
+    librsvg2-bin
 
 ENV DEV_PACKAGES_2 \
     # for weasyprint
