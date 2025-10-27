@@ -18,7 +18,7 @@ ENV DEV_PACKAGES \
     build-essential \
     php \
     php-zip \
-    php-xml
+    php-xml \
     # for pandoc pdf conversion
     librsvg2-bin
 
