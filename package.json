@@ -1,0 +1,19 @@
+{
+  "name": "xmlworkflow",
+  "version": "1.0.0",
+  "description": "XML Workflow Dependencies",
+  "private": true,
+  "dependencies": {
+    "esm": "^3.2.25",
+    "yargs": "^17.7.2",
+    "mathjax": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "overrides": {
+    "@babel/polyfill": "^7.12.1",
+    "core-js": "^3.33.2",
+    "node-domexception": false
+  }
+}
