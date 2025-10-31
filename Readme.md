@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.4 (5.6.2024)
+- Version: 1.5 (31.10.2025)
 - Developed by: Ronald Steffen
 
 ---
@@ -10,16 +10,16 @@ This repo contains a container image assembling different open source tools and 
 ***NOTE: This repo is under development.***
 This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
 
-The tools included are:
+The tools included are [updated 31.10.2025]:
 
-- [Pandoc](https://pandoc.org/) 3.1.12.2
-- [luarocks](https://luarocks.org/) 3.9.2
-- [Saxon HE 12 4J](https://www.saxonica.com/documentation12/documentation.xml)
-- [mathjax-full](https://www.mathjax.org/) 3.2.2
+- [Pandoc](https://pandoc.org/) 3.8.2.1
+- [luarocks](https://luarocks.org/) 3.12.2
+- [Saxon HE 12.9J](https://www.saxonica.com/documentation12/documentation.xml)
+- [mathjax-full](https://www.mathjax.org/) 4.0.0
 - [Pagedjs](https://pagedjs.org/) and [pagedjs-cli](https://github.com/pubpub/pagedjs-cli) 0.4.3 (with puppeteer 22.4.1)
-- [WeasyPrint](https://weasyprint.org/) version 57.2
+- [WeasyPrint](https://weasyprint.org/) version 62.3
 - [docxToJats](https://github.com/Vitaliy-1/docxToJats)
-- [just](https://github.com/casey/just) 2.0.1 (for task execution)
+- [just](https://github.com/casey/just) 1.43.0 (for task execution)
 
 Template files and other sources (e.g. css) are dereived from:
 
@@ -181,6 +181,7 @@ To run a set of different tests use:
 ## Known issues
 
 - As of Pandoc version 3.1.12.2 the Pandoc HTML reader complains about unclosed HTML tags (used to work with Pandoc 3.1.11). Therefore the HTML -> PDF conversion with Pandoc is currently broken.
+- Pajedjs dependencies are deprecated. Pajedjs has been disabled.
 
 ## Version history
 

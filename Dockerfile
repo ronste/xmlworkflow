@@ -1,6 +1,11 @@
-FROM debian:bookworm
+FROM debian:trixie-slim
 
 LABEL maintainer="Ronald Steffen, FU Berlin <r.steffen@fu-berlin.de>"
+
+ENV PANDOC_VERSION=3.8.2.1
+ENV SAXON_VERSION=HE12-9
+ENV LUA_VERSION=5.4
+ENV LUAROCKS_VERSION=3.12.2
 
 # Basic packages
 ENV SYS_PACKAGES \
@@ -46,7 +51,7 @@ ENV TOOLS_PACKAGES \
 
 ENV TOOLS_PACKAGES_2 \
     # for pandoc custom writer
-    liblua5.4-dev \
+    liblua${LUA_VERSION}-dev \
     lua5.4 \
     libreadline-dev \
     pipx \ 
@@ -75,45 +80,57 @@ RUN set -xe && apt-get update  \
     && cd home \
 	&& apt-get install -y $DEV_PACKAGES_3
 
+# Copy package.json, .npmrc and install local dependencies
+COPY package.json .npmrc /root/
+
 # install required tools not available through the Debian repository
 RUN set -xe && cd root \
     && git clone https://github.com/ronste/xmlworkflow.git \
     # && mkdir xmlworkflow \
     && mkdir xmlworkflow/lib \
     && mkdir xmlworkflow/work \
+    && mkdir xmlworkflow/store \
     && mkdir xmlworkflow/work/media \
     && mkdir xmlworkflow/work/metadata\
     && cd xmlworkflow/lib \
+    # create python .venv
+    && python3 -m venv /root/.venv \
+    && . /root/.venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install docx \
     ## docx2jats
     && git clone https://github.com/Vitaliy-1/docxToJats.git \
     # Pandoc
     && arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
-    && wget https://github.com/jgm/pandoc/releases/download/3.1.12.2/pandoc-3.1.12.2-linux-${arch}.tar.gz \
-    && tar xvzf pandoc-3.1.12.2-linux-${arch}.tar.gz --strip-components 1 -C /usr/local/ \
+    && wget https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-${arch}.tar.gz \
+    && tar xvzf pandoc-${PANDOC_VERSION}-linux-${arch}.tar.gz --strip-components 1 -C /usr/local/ \
+    && rm pandoc-${PANDOC_VERSION}-linux-${arch}.tar.gz \
     # Saxon-HE
-    # Note: Current Debian Saxon-HE package is verion 9.9 !!!
-    && wget https://github.com/Saxonica/Saxon-HE/releases/download/SaxonHE12-4/SaxonHE12-4J.zip \
-    && unzip -d SaxonHE12-4J SaxonHE12-4J.zip \
-    # mathjax, esm for weasyprint
-    && npm install esm yargs mathjax-full \
-    # pagedjs/puppeteer, html validation
-    # RS: 15.10.2024 pagedjs-cli and puppeteer generate deprecation warnings, version 0.5 beta of pagedjs-cli exists but still contains deprecated dependencies
-    && npm install -g pagedjs-cli puppeteer html-validate \
+    && wget https://github.com/Saxonica/Saxon-HE/releases/download/Saxon${SAXON_VERSION}/Saxon${SAXON_VERSION}J.zip \
+    && unzip -d Saxon${SAXON_VERSION}J Saxon${SAXON_VERSION}J.zip \
+    && rm Saxon${SAXON_VERSION}J.zip \
+    # Setup npm and install global packages
+    && npm install -g npm@latest \
+    && npm install -g \
+       html-validate \
+       just-install \
+        #    puppeteer \ # used by pagedjs
+        #    pagedjs-cli@latest # still outdated -> find alternative
+    # Setup npm and install local packages from package.json
+    npm install --omit=dev --omit=optional \
     # for pandoc custom writer
-    && wget https://luarocks.org/releases/luarocks-3.9.2.tar.gz \
-    && tar zxpf luarocks-3.9.2.tar.gz \
-    && cd luarocks-3.9.2 \
+    # Install luarocks and dependencies
+    && wget https://luarocks.org/releases/luarocks-${LUAROCKS_VERSION}.tar.gz \
+    && tar zxpf luarocks-${LUAROCKS_VERSION}.tar.gz \
+    && cd luarocks-${LUAROCKS_VERSION} \
     && ./configure && make && sudo make install \
     && luarocks install xml2lua \
     && eval "$(luarocks path)" \
     && cd .. \
-    ## clean up
-    && rm pandoc-3.1.12.2-linux-${arch}.tar.gz SaxonHE12-4J.zip luarocks-3.9.2.tar.gz \
-    ## just
-    && npm install -g just-install \
-    # create an alias for the just command
-    && echo '#!/usr/bin/env bash' >> /bin/processDocx \
-    && echo "cd /root/xmlworkflow/work" \
+    && rm luarocks-${LUAROCKS_VERSION}.tar.gz \
+    # Setup processDocx command
+    && echo '#!/usr/bin/env bash' > /bin/processDocx \
+    && echo "cd /root/xmlworkflow/work" >> /bin/processDocx \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx \
     && processDocx reset-example
