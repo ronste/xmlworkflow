@@ -22,5 +22,5 @@ mathjax-: _default
   cp "$WORK_PATH/{{docx-file}}_mathjax.html" "$WORK_PATH/{{buffer-html-file}}"
   echo "Elapsed Time: $SECONDS seconds"
 
-# Convert Mathl to CHTML using mathjax
+# Convert MathML to CHTML using mathjax
 mathjax: _default html mathjax-

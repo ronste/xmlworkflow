@@ -2,6 +2,7 @@
 all: _default pdf
 
 set dotenv-load := true
+set allow-duplicate-recipes := true
 
 [private]
 alias Pandoc := pandoc
@@ -41,7 +42,9 @@ pagedjs-polyfill := 'false'
 
 # path variables
 develop_html_fragment := '$(echo "/<head/ r "$XSL_PATH/html_fragment_develop.html"")'
-javaClassPath := "$LIB_PATH/SaxonHE12-4J/saxon-he-12.4.jar:$LIB_PATH/SaxonHE12-4J/lib/xmlresolver-5.2.2.jar"
+
+# find jar files in $LIB_PATH/Saxon${SAXON_VERSION}J/ and add to classpath
+javaClassPath := '$(find $LIB_PATH/Saxon${SAXON_VERSION}J/ -name "*.jar" | tr "\n" ":")'
 
 # color defnitions
 hcs := '\033[0;32m' # heading color start
@@ -102,3 +105,23 @@ reset-example xml-mode=xml-mode: cleanup-work && _default
 @copy-work destination:
   mkdir $COPY_PATH/{{destination}}
   cp -r $WORK_PATH/* $COPY_PATH/{{destination}}
+
+# Show versions of all used tools
+[no-cd]
+@versions:
+  echo "{{hcs}}Pandoc version: {{nc}}"$(pandoc --version | head -n 1)
+  echo -n "{{hcs}}Saxon version: {{nc}}"
+  echo -n $(java -cp {{javaClassPath}} net.sf.saxon.Version)
+  # echo "{{hcs}}Pagedjs version: {{nc}}"$(pagedjs --version)
+  echo "{{hcs}}WeasyPrint version: {{nc}}"$(weasyprint --version | head -n 1)
+  echo "{{hcs}}MathJax version: {{nc}}"$(npm list mathjax 2>/dev/null | grep 'mathjax' | sed 's/.*@//')
+  echo "{{hcs}}LuaRocks version: {{nc}}"$(luarocks --version | head -n 1 )
+  echo "{{hcs}}just version: {{nc}}"$(just --version)
+
+# Overwrite pagedjs- to disable it
+[no-cd, private]
+pagedjs-:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  source ~/.bashrc
+  echo -e "{{wcs}}Pagedjs currently disabled due to lack of maintenance{{nc}}"
