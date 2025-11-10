@@ -133,5 +133,8 @@ RUN set -xe && cd root \
     && echo "cd /root/xmlworkflow/work" >> /bin/processDocx \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx \
-    && processDocx reset-example
+    && processDocx reset-example \
+    # Setup cli completition
+    && just --completions bash > /usr/local/bin/just-completion.bash \
+    && echo -e "complete -W '$(processDocx --summary)' processDocx\nif [ -f /usr/local/bin/just-completion.bash ]; then\n    . /usr/local/bin/just-completion.bash\nfi" >> ~/.bashrc
 
