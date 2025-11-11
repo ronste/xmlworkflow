@@ -31,7 +31,8 @@ pandoc- xml-mode=xml-mode: _default
     --citeproc \
     --template $UTILS_PATH/{{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }} \
     -t "$UTILS_PATH/custom_jats_writer.lua" \
-    -o "$WORK_PATH/{{docx-file}}_Pandoc.xml"
+    -o "$WORK_PATH/{{docx-file}}_Pandoc.xml" \
+    --wrap preserve
   cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx-file}}_Pandoc.xml" "$WORK_PATH/{{buffer-xml-file}}"
   cp {{ if debug == "true" { "--verbose" } else { "" } }} $RES_PATH/logo/* $WORK_PATH/media
   echo "Elapsed Time: $SECONDS seconds"
