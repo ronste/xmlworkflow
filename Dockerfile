@@ -1,11 +1,12 @@
-FROM debian:trixie-slim
+FROM debian:stable-slim
 
 LABEL maintainer="Ronald Steffen, FU Berlin <r.steffen@fu-berlin.de>"
 
-ENV PANDOC_VERSION=3.8.2.1
+ENV PANDOC_VERSION=3.9
 ENV SAXON_VERSION=HE12-9
 ENV LUA_VERSION=5.4
-ENV LUAROCKS_VERSION=3.12.2
+ENV LUAROCKS_VERSION=3.13.0
+ENV PATH="/root/.venv/bin:${PATH}"
 
 # Basic packages
 ENV SYS_PACKAGES \
@@ -97,7 +98,7 @@ RUN set -xe && cd root \
     && python3 -m venv /root/.venv \
     && . /root/.venv/bin/activate \
     && pip install --upgrade pip \
-    && pip install docx \
+    && pip install docx weasyprint \
     ## docx2jats
     && git clone https://github.com/Vitaliy-1/docxToJats.git \
     # Pandoc
@@ -133,8 +134,6 @@ RUN set -xe && cd root \
     && echo "cd /root/xmlworkflow/work" >> /bin/processDocx \
     && echo 'just "$@"' >> /bin/processDocx \
     && chmod u+x /bin/processDocx \
-    && processDocx reset-example \
-    # Setup cli completition
-    && just --completions bash > /usr/local/bin/just-completion.bash \
-    && echo -e "complete -W '$(processDocx --summary)' processDocx\nif [ -f /usr/local/bin/just-completion.bash ]; then\n    . /usr/local/bin/just-completion.bash\nfi" >> ~/.bashrc
+    && processDocx reset-example
 
+WORKDIR /root/xmlworkflow

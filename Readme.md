@@ -1,6 +1,6 @@
 # XML Workflow Image
 
-- Version: 1.5 (31.10.2025)
+- Version: 1.6 (04.03.2026)
 - Developed by: Ronald Steffen
 
 ---
@@ -10,16 +10,16 @@ This repo contains a container image assembling different open source tools and 
 ***NOTE: This repo is under development.***
 This repo is intended as a proof-of-concept tool. In particular the templates require significant revision and improvement. I don't play around with Latex. So don't count on any developments of the pandoc-pdf Latex template. Documantation is incomplete.
 
-The tools included are [updated 31.10.2025]:
+The tools included are [updated 04.03.2026]:
 
-- [Pandoc](https://pandoc.org/) 3.8.2.1
-- [luarocks](https://luarocks.org/) 3.12.2
+- [Pandoc](https://pandoc.org/) 3.9
+- [luarocks](https://luarocks.org/) 3.13.0
 - [Saxon HE 12.9J](https://www.saxonica.com/documentation12/documentation.xml)
 - [mathjax-full](https://www.mathjax.org/) 4.0.0
 - [Pagedjs](https://pagedjs.org/) and [pagedjs-cli](https://github.com/pubpub/pagedjs-cli) 0.4.3 (with puppeteer 22.4.1)
-- [WeasyPrint](https://weasyprint.org/) version 62.3
+- [WeasyPrint](https://weasyprint.org/) version 68.1
 - [docxToJats](https://github.com/Vitaliy-1/docxToJats)
-- [just](https://github.com/casey/just) 1.43.0 (for task execution)
+- [just](https://github.com/casey/just) 1.46.0 (for task execution)
 
 Template files and other sources (e.g. css) are dereived from:
 
@@ -27,7 +27,7 @@ Template files and other sources (e.g. css) are dereived from:
 - Preview of [NISO JATS Publishing 1.0](https://jats.nlm.nih.gov/publishing/tag-library/1.0/) XML
 - [NLM/NCBI  Journal Publishing 3.0](https://dtd.nlm.nih.gov/publishing/3.0/) Preview HTML
 - Journal Publishing 3.0 APA-like Citation
-- [NCBI Book Tag Set Version 2.1](https://dtd.nlm.nih.gov/book/2.1/index.html)
+- [NCBI Book Tag Set Version 3.0](https://dtd.nlm.nih.gov/book/3.0/index.html)
 
 ## Installation & Usage
 
