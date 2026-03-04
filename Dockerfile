@@ -44,8 +44,6 @@ ENV DEV_PACKAGES_3 \
 ENV TOOLS_PACKAGES \
     # for PDF conversion with Pandoc
     texlive \
-    # for weasyprint
-    weasyprint \
     # for xml processing/validation
     libxml2-utils \
     xmlstarlet
