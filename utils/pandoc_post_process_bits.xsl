@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xlink="http://www.w3.org/1999/xlink" exclude-result-prefixes="xs" version="2.0">
 
-    <xsl:output method="xml" standalone="no" doctype-public="-//NLM//DTD BITS Book Interchange DTD v2.1 20220202//EN" doctype-system="https://jats.nlm.nih.gov/extensions/bits/2.1/BITS-book2-1.dtd" indent="yes" />
+    <xsl:output method="xml" standalone="no" doctype-public="-//NLM//DTD BITS Book Interchange DTD v2.2 20250930//EN"  doctype-system="https://jats.nlm.nih.gov/extensions/bits/2.2/BITS-book2-2.dtd" indent="yes" />
 
     <xsl:strip-space elements="*" />
 

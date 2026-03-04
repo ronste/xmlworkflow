@@ -27,7 +27,7 @@ Template files and other sources (e.g. css) are dereived from:
 - Preview of [NISO JATS Publishing 1.0](https://jats.nlm.nih.gov/publishing/tag-library/1.0/) XML
 - [NLM/NCBI  Journal Publishing 3.0](https://dtd.nlm.nih.gov/publishing/3.0/) Preview HTML
 - Journal Publishing 3.0 APA-like Citation
-- [NCBI Book Tag Set Version 3.0](https://dtd.nlm.nih.gov/book/3.0/index.html)
+- [NCBI Book Tag Set Version 2.2](https://jats.nlm.nih.gov/extensions/bits/2.2/dtd.html)
 
 ## Installation & Usage
 
@@ -188,6 +188,7 @@ To run a set of different tests use:
 1.1 New recipes added
 1.2 Added feature to define theme-specific custom conversion steps
 1.3 Added docxtojats converter, added mathjay, runtests and xml-validate recipes
+1.6 Major version updates
 
 ## Disclaimer
 
