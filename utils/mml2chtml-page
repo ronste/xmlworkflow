@@ -1,10 +1,10 @@
-#! /usr/bin/env -S node -r esm
+#! /usr/bin/env node
 
 /*************************************************************************
  *
  *  simple/mml2chtml-page
  *
- *  Uses MathJax v3 to convert all MathML in an HTML document.
+ *  Uses MathJax v4 to convert all MathML in an HTML document.
  *
  * ----------------------------------------------------------------------
  *
@@ -39,13 +39,8 @@ var argv = require('yargs')
             describe: 'ex-size in pixels'
         },
         fontURL: {
-            default: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2',
+            default: 'https://cdn.jsdelivr.net/npm/mathjax@4/output/chtml/fonts/woff-v2',
             describe: 'the URL to use for web fonts'
-        },
-        dist: {
-            boolean: true,
-            default: false,
-            describe: 'true to use webpacked version, false to use MathJax source files'
         }
     })
     .argv;
@@ -58,12 +53,11 @@ const htmlfile = require('fs').readFileSync(argv._[0], 'utf8');
 //
 // Load MathJax and initialize MathJax and typeset the given math
 //
-require('mathjax-full').init({
+require('mathjax').init({
     //
     //  The MathJax configuration
     //
     loader: {
-        source: (argv.dist ? {} : require('mathjax-full/components/src/source.js').source),
         load: ['adaptors/liteDOM', 'input/mml', 'output/chtml', 'a11y/assistive-mml', 'input/mml/entities']
     },
     chtml: {

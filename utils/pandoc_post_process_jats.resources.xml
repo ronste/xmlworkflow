@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <entry key="specific-use.figure-prefix" value="figure"/>
+  <entry key="specific-use.table-prefix" value="table"/>
+  <entry key="xref.ref-type.bibr" value="bibr"/>
+  <entry key="caption.label-delimiter" value="#"/>
+  <entry key="id.figure-prefix" value="figure-"/>
+  <entry key="id.aff-prefix" value="aff-"/>
+  <entry key="license.ccby.href" value="./media/ccby.png"/>
+</resources>

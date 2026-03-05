@@ -4,9 +4,8 @@
   "description": "XML Workflow Dependencies",
   "private": true,
   "dependencies": {
-    "esm": "^3.2.25",
-    "yargs": "^17.7.2",
-    "mathjax": "^4.0.0"
+    "mathjax": "^4.1.1",
+    "yargs": "^17.7.2"
   },
   "engines": {
     "node": ">=16.0.0"

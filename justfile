@@ -67,7 +67,7 @@ import 'justfiles/xmllint-justfile'
 pdf-: _default (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
 
 # Generate PDF using Pandoc, Pagedjs and Weasyprint
-pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- weasyprint-
+pdf: _default html (pandoc-pdf- pandoc_from) pagedjs- mathjax weasyprint-
 
 [no-cd]
 @_cleanup-tmp:

@@ -8,7 +8,7 @@ _mathjax-help:
   https://github.com/mathjax/MathJax-demos-node
 
   Known issues:
-  - node -r esm needs to be executed in the lib folder; just escape seqeunce does not work 
+  - MathJax conversion script runs with the workspace node_modules on Node.js 20+
   EOF
 
 # Convert Mathl to CHTML using mathjax
@@ -18,7 +18,7 @@ mathjax-: _default
   set -euo pipefail
   source ~/.bashrc
   echo -e "{{hcs}}Processing MathML with Mathjax ... {{nc}}"
-  docx_file="{{docx-file}}" && cd $LIB_PATH && node -r esm "mml2chtml-page" "$WORK_PATH/{{html-file}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd $WORK_PATH
+  docx_file="{{docx-file}}" && cd "$UTILS_PATH" && node "mml2chtml-page" --fontURL "../utils/mathjax-fonts" "$WORK_PATH/{{html-file}}" > "$WORK_PATH/${docx_file}_mathjax.html" && cd "$WORK_PATH"
   cp "$WORK_PATH/{{docx-file}}_mathjax.html" "$WORK_PATH/{{buffer-html-file}}"
   echo "Elapsed Time: $SECONDS seconds"
 

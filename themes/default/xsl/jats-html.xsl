@@ -2511,14 +2511,14 @@ or pipeline) parameterized.
     </div>
   </xsl:template>
 
-
-  <xsl:template match="tex-math">
+  <!-- handle tex-math alternative elements: we don't currently use those -->
+  <xsl:template match="tex-math"></xsl:template>
+  <!-- <xsl:template match="tex-math">
     <span class="tex-math">
       <span class="generated">[TeX:] </span>
       <xsl:apply-templates />
     </span>
-  </xsl:template>
-
+  </xsl:template> -->
 
   <xsl:template match="mml:*">
     <!-- this stylesheet simply copies MathML through. If your browser

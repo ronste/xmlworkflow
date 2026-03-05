@@ -195,7 +195,6 @@ function Writer (doc, opts)
                         div.content[1].content:remove(1)
                         div.content[1].content:remove(1)
                         div.content[1].content:remove(1)
-                        div.content[1].content:remove(1)
                         div.attr.attributes['specific-use'] = 'figure'
                     end
                     return div

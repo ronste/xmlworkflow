@@ -11,14 +11,17 @@ _pandoc-help:
 
   EOF
   
-# Convert docx to Jats XML using Pandoc.
-pandoc: (pandoc- xml-mode)
+# Convert docx to Jats XML using Pandoc and custom Lua filter.
+pandoc: (pandoc- xml-mode "on")
+
+# Convert docx to Jats XML using Pandoc without custom Lua filter.
+pandoc-no-lua: (pandoc- xml-mode "off")
 
 # Convert docx to Bits XML using Pandoc (experimental, metadata not yet supported).
 pandoc-bits: (pandoc- "bits")
 
 [no-cd, private]
-pandoc- xml-mode=xml-mode: _default
+pandoc- xml-mode=xml-mode lua-mode="on": _default
   #!/usr/bin/env bash
   set -euo pipefail
   source ~/.bashrc
@@ -30,7 +33,7 @@ pandoc- xml-mode=xml-mode: _default
     --metadata-file="$METADATA_PATH/metadata.yaml" \
     --citeproc \
     --template $UTILS_PATH/{{ if xml-mode == "bits" { "bits_template.tex" } else { "jats_template.tex" } }} \
-    -t "$UTILS_PATH/custom_jats_writer.lua" \
+    {{ if lua-mode=="on" { "-t $UTILS_PATH/custom_jats_writer.lua" } else { "-t jats" } }} \
     -o "$WORK_PATH/{{docx-file}}_Pandoc.xml" \
     --wrap preserve
   cp {{ if debug == "true" { "--verbose" } else { "" } }} "$WORK_PATH/{{docx-file}}_Pandoc.xml" "$WORK_PATH/{{buffer-xml-file}}"
