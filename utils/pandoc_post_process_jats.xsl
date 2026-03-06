@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:cfg="urn:xmlworkflow:jats:config"
+    xmlns:cfg="urn:sspworkflow:jats:config"
     exclude-result-prefixes="xs cfg"
     version="2.0">
 

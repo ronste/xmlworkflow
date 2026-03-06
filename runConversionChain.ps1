@@ -1,1 +1,1 @@
-podman exec xmlworkflow /bin/bash -c 'cd /root/xmlworkflow/work && runConversionChain "$@"' _ @args
+podman exec sspworkflow /bin/bash -c 'cd /root/sspworkflow/work && runConversionChain "$@"' _ @args

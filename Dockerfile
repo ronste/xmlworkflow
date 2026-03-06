@@ -81,14 +81,14 @@ RUN set -xe && apt-get update  \
 
 # install required tools not available through the Debian repository
 RUN set -xe && cd root \
-    && git clone https://github.com/ronste/xmlworkflow.git \
-    # && mkdir xmlworkflow \
-    && mkdir xmlworkflow/lib \
-    && mkdir xmlworkflow/work \
-    && mkdir xmlworkflow/store \
-    && mkdir xmlworkflow/work/media \
-    && mkdir xmlworkflow/work/metadata\
-    && cd xmlworkflow/lib \
+    && git clone https://github.com/ronste/sspworkflow.git \
+    # && mkdir sspworkflow \
+    && mkdir sspworkflow/lib \
+    && mkdir sspworkflow/work \
+    && mkdir sspworkflow/store \
+    && mkdir sspworkflow/work/media \
+    && mkdir sspworkflow/work/metadata\
+    && cd sspworkflow/lib \
     # create python .venv
     && python3 -m venv /root/.venv \
     && . /root/.venv/bin/activate \
@@ -126,9 +126,9 @@ RUN set -xe && cd root \
     && rm luarocks-${LUAROCKS_VERSION}.tar.gz \
     # Setup runConversionChain command
     && echo '#!/usr/bin/env bash' > /bin/runConversionChain \
-    && echo "cd /root/xmlworkflow/work" >> /bin/runConversionChain \
+    && echo "cd /root/sspworkflow/work" >> /bin/runConversionChain \
     && echo 'just "$@"' >> /bin/runConversionChain \
     && chmod u+x /bin/runConversionChain \
     && runConversionChain reset-example
 
-WORKDIR /root/xmlworkflow
+WORKDIR /root/sspworkflow

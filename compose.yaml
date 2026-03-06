@@ -2,19 +2,19 @@ version: "3.6"
 
 services:
   xmlContainer:
-    image: "xmlworkflow:latest"
+    image: "sspworkflow:latest"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    container_name: "xmlworkflow"
-    hostname: "xmlworkflow"
+    container_name: "sspworkflow"
+    hostname: "sspworkflow"
     ports:
       - "${HTTP_PORT:-8080}:80" # for future extensions
     volumes:
-      - ./utils:/root/xmlworkflow/utils
-      - ./themes:/root/xmlworkflow/themes
-      - ./work:/root/xmlworkflow/work
-      - ./justfile:/root/xmlworkflow/justfile
-      - ./.env:/root/xmlworkflow/.env
-      - ./utils/mml2chtml-page:/root/xmlworkflow/lib/mml2chtml-page
-      - ./justfiles:/root/xmlworkflow/justfiles
-      - ./store:/root/xmlworkflow/store
+      - ./utils:/root/sspworkflow/utils
+      - ./themes:/root/sspworkflow/themes
+      - ./work:/root/sspworkflow/work
+      - ./justfile:/root/sspworkflow/justfile
+      - ./.env:/root/sspworkflow/.env
+      - ./utils/mml2chtml-page:/root/sspworkflow/lib/mml2chtml-page
+      - ./justfiles:/root/sspworkflow/justfiles
+      - ./store:/root/sspworkflow/store
