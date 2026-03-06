@@ -34,10 +34,18 @@ Template files and other sources (e.g. css) are dereived from:
 ### Installation
 
 1. Download all files required to build and run the image/container (To use this repo in "production mode" you don't need to clone it to your host machine. This might only be necessary in case you want to develop new templates.):
-        ```bash
-        wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
-        source download.sh
-        ```
+
+    Linux/macOS (bash):
+    ```bash
+    wget https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.sh
+    source download.sh
+    ```
+
+    Windows (PowerShell):
+    ```powershell
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.ps1" -OutFile "download.ps1"
+    .\download.ps1
+    ```
 2. Build the conainter image from inside the download directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
     - `docker build -t xmlworkflow:latest .`
     - `podman build -t xmlworkflow:latest .`
@@ -49,7 +57,15 @@ Template files and other sources (e.g. css) are dereived from:
 1) Create a directory to hold all your working directories and files
 2) From inside this directory start a conatiner with:
     `. <path-to-your-download-directory>/xmlworkflow-run-prod.sh <your-container-name>` to start a container
-3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-example"` to use the demo docx file
+    
+    On Windows (PowerShell) use:
+    `& "<path-to-your-download-directory>\xmlworkflow-run-prod.ps1" -ContainerImage "xmlworkflow:latest"`
+    
+    Note: The PowerShell script derives the runtime container name from the image name. With `xmlworkflow:latest`, the container name will be `xmlworkflow`.
+3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-jats-example"` to use the demo docx file
+
+   PowerShell example (default container name):
+   `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-jats-example"`
 
 ### Perfrom a docx converion
 
@@ -59,11 +75,18 @@ Please note that the default conversion chain (which handles metadata from the d
 Start the docx conversion with the following command:
     - `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
 
+Windows PowerShell example (default container name):
+    - `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
+
 This will create a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
 
 To get an overview of all options run:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx help`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx help"`
+
+Windows PowerShell example (default container name):
+
+`podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx help"`
 
 which will output:
 
@@ -170,6 +193,10 @@ An empty HTML template that loads the development CSS and the Pagedjs polyfill i
 To run a set of different tests use:
 
 `podman exec \<your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
+
+## How to handle Mathjax fonts
+
+For handling Mathjax fonts see [here](https://docs.mathjax.org/en/v4.0/output/fonts.html).
 
 ## Next steps
 

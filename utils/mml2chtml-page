@@ -39,16 +39,31 @@ var argv = require('yargs')
             describe: 'ex-size in pixels'
         },
         fontURL: {
-            default: 'https://cdn.jsdelivr.net/npm/mathjax@4/output/chtml/fonts/woff-v2',
-            describe: 'the URL to use for web fonts'
-        }
+            default: null,
+            describe: 'Base URL for MathJax CHTML fonts (defaults to local node_modules path)'
+        },
     })
     .argv;
+
+const path = require('path');
+const fs = require('fs');
+
+// Use an explicit file:// font path so downstream renderers can resolve MathJax fonts.
+const defaultFontURL = 'file://' + path.resolve(
+    __dirname,
+    '..',
+    'node_modules',
+    '@mathjax',
+    'mathjax-newcm-font',
+    'chtml',
+    'woff2'
+).replace(/\\/g, '/');
+const fontURL = argv.fontURL || defaultFontURL;
 
 //
 //  Read the HTML file
 //
-const htmlfile = require('fs').readFileSync(argv._[0], 'utf8');
+const htmlfile = fs.readFileSync(argv._[0], 'utf8');
 
 //
 // Load MathJax and initialize MathJax and typeset the given math
@@ -61,8 +76,8 @@ require('mathjax').init({
         load: ['adaptors/liteDOM', 'input/mml', 'output/chtml', 'a11y/assistive-mml', 'input/mml/entities']
     },
     chtml: {
-        fontURL: argv.fontURL,
-        exFactor: argv.ex / argv.em
+        exFactor: argv.ex / argv.em,
+        fontURL
     },
     'adaptors/liteDOM': {
         fontSize: argv.em

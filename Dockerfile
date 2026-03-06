@@ -79,9 +79,6 @@ RUN set -xe && apt-get update  \
     && cd home \
 	&& apt-get install -y $DEV_PACKAGES_3
 
-# Copy npm manifests and npmrc for deterministic local dependency install
-COPY package.json package-lock.json .npmrc /root/
-
 # install required tools not available through the Debian repository
 RUN set -xe && cd root \
     && git clone https://github.com/ronste/xmlworkflow.git \
@@ -117,46 +114,6 @@ RUN set -xe && cd root \
         #    pagedjs-cli@latest # still outdated -> find alternative
     # Setup npm and install local packages from package.json
     && npm ci --omit=dev --omit=optional \
-        # Download MathJax CHTML fonts for offline/local rendering
-        && mkdir -p /root/xmlworkflow/utils/mathjax-fonts \
-        && for font in \
-            mjx-ncm-zero.woff2 \
-            mjx-ncm-brk.woff2 \
-            mjx-ncm-n.woff2 \
-            mjx-ncm-b.woff2 \
-            mjx-ncm-i.woff2 \
-            mjx-ncm-bi.woff2 \
-            mjx-ncm-ds.woff2 \
-            mjx-ncm-f.woff2 \
-            mjx-ncm-fb.woff2 \
-            mjx-ncm-ss.woff2 \
-            mjx-ncm-ssb.woff2 \
-            mjx-ncm-ssi.woff2 \
-            mjx-ncm-ssbi.woff2 \
-            mjx-ncm-m.woff2 \
-            mjx-ncm-so.woff2 \
-            mjx-ncm-lo.woff2 \
-            mjx-ncm-s3.woff2 \
-            mjx-ncm-s4.woff2 \
-            mjx-ncm-s5.woff2 \
-            mjx-ncm-s6.woff2 \
-            mjx-ncm-s7.woff2 \
-            mjx-ncm-mi.woff2 \
-            mjx-ncm-c.woff2 \
-            mjx-ncm-cb.woff2 \
-            mjx-ncm-os.woff2 \
-            mjx-ncm-ob.woff2 \
-            mjx-ncm-v.woff2 \
-            mjx-ncm-lt.woff2 \
-            mjx-ncm-rb.woff2 \
-            mjx-ncm-em.woff2 \
-            mjx-ncm-b-a.woff2 \
-            mjx-ncm-u.woff2 \
-            mjx-ncm-u-a.woff2 \
-            mjx-ncm-s.woff2 \
-            mjx-ncm-sb.woff2; do \
-            curl -fsSL "https://cdn.jsdelivr.net/npm/mathjax@4/output/chtml/fonts/woff-v2/$font" -o "/root/xmlworkflow/utils/mathjax-fonts/$font"; \
-        done \
     # for pandoc custom writer
     # Install luarocks and dependencies
     && wget https://luarocks.org/releases/luarocks-${LUAROCKS_VERSION}.tar.gz \

@@ -4,6 +4,7 @@
   "description": "XML Workflow Dependencies",
   "private": true,
   "dependencies": {
+    "@mathjax/mathjax-newcm-font": "4.1.1",
     "mathjax": "^4.1.1",
     "yargs": "^17.7.2"
   },
