@@ -29,17 +29,16 @@ $workPath = (Resolve-Path "work").Path
 $themePath = (Resolve-Path "themes").Path
 $storePath = (Resolve-Path "store").Path
 
+# Don't bind themes folder, as they would not be available inside the container anymore.
 if (Get-Command podman -ErrorAction SilentlyContinue) {
     podman run -it --name $ContainerName -d `
         -v "${workPath}:/root/sspworkflow/work" `
-        # -v "${themePath}:/root/sspworkflow/themes" ` # Don't bind themes folder, as they would not be available inside the container anymore
         -v "${storePath}:/root/sspworkflow/store" `
         $ContainerImage
 }
 elseif (Get-Command docker -ErrorAction SilentlyContinue) {
     docker run -it --name $ContainerName -d `
         -v "${workPath}:/root/sspworkflow/work" `
-        # -v "${themePath}:/root/sspworkflow/themes" `
         -v "${storePath}:/root/sspworkflow/store" `
         $ContainerImage
 }
@@ -47,4 +46,3 @@ else {
     Write-Error "Neither Podman nor Docker is installed. Please install one of them to run the container."
     exit 1
 }
-
