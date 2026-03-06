@@ -43,8 +43,7 @@ Template files and other sources (e.g. css) are dereived from:
 
     Windows (PowerShell):
     ```powershell
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.ps1" -OutFile "download.ps1"
-    .\download.ps1
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ronste/xmlworkflow/main/download.ps1" -OutFile "download.ps1" && .\download.ps1
     ```
 2. Build the conainter image from inside the download directory according to your platform (e.g. Docker, Podman, ...) with the image name `xmlworkflow:latest`, eg:
     - `docker build -t xmlworkflow:latest .`

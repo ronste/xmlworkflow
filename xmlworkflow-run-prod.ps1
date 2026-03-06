@@ -26,17 +26,20 @@ New-Item -ItemType Directory -Force -Path "theme" | Out-Null
 $ContainerName = ($ContainerImage -split ":")[0]
 
 $workPath = (Resolve-Path "work").Path
+$themePath = (Resolve-Path "theme").Path
 $storePath = (Resolve-Path "store").Path
 
 if (Get-Command podman -ErrorAction SilentlyContinue) {
     podman run -it --name $ContainerName -d `
         -v "${workPath}:/root/xmlworkflow/work" `
+        -v "${themePath}:/root/xmlworkflow/theme" `
         -v "${storePath}:/root/xmlworkflow/store" `
         $ContainerImage
 }
 elseif (Get-Command docker -ErrorAction SilentlyContinue) {
     docker run -it --name $ContainerName -d `
         -v "${workPath}:/root/xmlworkflow/work" `
+        -v "${themePath}:/root/xmlworkflow/theme" `
         -v "${storePath}:/root/xmlworkflow/store" `
         $ContainerImage
 }

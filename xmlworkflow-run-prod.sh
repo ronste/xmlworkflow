@@ -26,6 +26,7 @@ if command -v podman &> /dev/null
 then
     podman run -it --name $1 -d \
         -v ./work:/root/xmlworkflow/work \
+        -v ./theme:/root/xmlworkflow/theme \
         -v ./store:/root/xmlworkflow/store \
         {containername}
         # binding for full dev mode needs to bind all folders individually (otherwise lib folder will not be available):
@@ -34,6 +35,7 @@ elif command -v docker &> /dev/null
 then
     docker run -it --name $1 -d \
         -v ./work:/root/xmlworkflow/work \
+        -v ./theme:/root/xmlworkflow/theme \
         -v ./store:/root/xmlworkflow/store \
         {containername}
 else
