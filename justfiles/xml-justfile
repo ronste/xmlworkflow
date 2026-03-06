@@ -3,7 +3,7 @@ _xml-help:
   cat << EOF
   This conversion step uses SaxonHE to perform a XSL transformation on a XML file. By default it uses the file "pandoc_post_process_jats.xsl" to perform a post precessing step on a prior Pandoc docx -> Jats XML conversion. However, you can provide a path to an XML file and a path to an XSL file in the form 
 
-  processDocx xml- <path-to-xml> <path-to-xsl>
+  runConversionChain xml- <path-to-xml> <path-to-xsl>
 
   to perform custom XSL transformations.
 

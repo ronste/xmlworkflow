@@ -61,10 +61,10 @@ Template files and other sources (e.g. css) are dereived from:
     `& "<path-to-your-download-directory>\xmlworkflow-run-prod.ps1" -ContainerImage "xmlworkflow:latest"`
     
     Note: The PowerShell script derives the runtime container name from the image name. With `xmlworkflow:latest`, the container name will be `xmlworkflow`.
-3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-jats-example"` to use the demo docx file
+3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain reset-jats-example"` to use the demo docx file
 
    PowerShell example (default container name):
-   `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx reset-jats-example"`
+   `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain reset-jats-example"`
 
 ### Perfrom a docx converion
 
@@ -72,25 +72,25 @@ To run a full docx to pdf conversion a specifically prepared MS Word docx docume
 Please note that the default conversion chain (which handles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
 Start the docx conversion with the following command:
-    - `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
+    - `podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain"`
 
 Windows PowerShell example (default container name):
-    - `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx"`
+    - `podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain"`
 
 This will create a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
 
 To get an overview of all options run:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx help"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain help"`
 
 Windows PowerShell example (default container name):
 
-`podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && processDocx help"`
+`podman exec xmlworkflow /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain help"`
 
 which will output:
 
 ```text
-Usage: [ processDocx | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx-file | xml-file | html-file =<filename> ] [ <recipe> ]
+Usage: [ runConversionChain | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx-file | xml-file | html-file =<filename> ] [ <recipe> ]
 
 To run a recipe without its dependencies add a "-" to the recipes name, e.g. "weasyprint-"
 If no docx file is provided the first docx file in the working dirctory will be taken.
@@ -123,28 +123,28 @@ Available recipes:
     runtests              # Run different test scripts
     weasyprint            # Generate PDF using Weasyprint
     xml                   # Convert docx to XML using Pandoc + Saxon HE 12.
-    xml-validate          # Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+    xml-validate          # Validate XML file against DTD provided by DOCTYPE tag. Usage: "runConversionChain xml-validate <filename>"
 ```
 
 More information on individual conversion steps may be available by running:
 
-`docker exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx help <recipe-name>`
+`docker exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain help <recipe-name>`
 
 ### The default (docx-based) conversion chain
 
-Running the processDocx command without any parameters will start the full chain of conversion from docx -> xml -> html -> pdf, including all versions of PDFs (created with Pandoc, PagedJs and Weasyprint).
+Running the runConversionChain command without any parameters will start the full chain of conversion from docx -> xml -> html -> pdf, including all versions of PDFs (created with Pandoc, PagedJs and Weasyprint).
 
 However, each of these conversion steps can be selected individually. To only run a conversion from docx to HTML use:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx html"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain html"`
 
 If, due to a previous run, the Jats XML buffer file requried to create the HTML output is already present in the working directory you can run the HTML conversion without its prior conversion steps by using:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx html-"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain html-"`
 
-Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`processDocx` command:
+Note that it is also possible to specify specific conversion chains directly by passing multiple recipe names to the`runConversionChain` command:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx pagedjs weasyprint"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain pagedjs weasyprint"`
 
 ### Using custom themes
 
@@ -154,7 +154,7 @@ You can then use the theme by providing the option `theme=<folder name>` and cus
 
 A theme may also contain its own justfile to define custom conversion steps. Not surprisingly, it should (but is not required to) import the main justfile. To run a conversion from this theme-specific justfile you directly specifiy the path to your custom justfile, e.g.:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx -f /root/xmlworkflow/themes/default/justfile help"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain -f /root/xmlworkflow/themes/default/justfile help"`
 
 If you run the above command you find the additional recipes `custom-help` and `custom-example` were added.
 
@@ -165,13 +165,13 @@ You could e.g. define a step doing a Markdown to XML conversion with Pandoc to b
 To run a custom conversion chain, e.g. not using the default Pandoc docx to Jats XML conversion, you can specifiy your conversion steps directly on the command line. In the following example docx to Jats XML conversion is facilitated by the [docxToJats converter](https://github.com/Vitaliy-1/docxToJats) and the resulting Jats XML file is subsequently passed through the default Jats XML -> HTML -> Weasyprint conversion steps.
 The minus sign at the end of the subsequent recipe names is important in this use case, since it indicates that only the recipe without its default dependecies (which would be Pandoc) should be run.
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx docxtojats html- weasyprint-"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain docxtojats html- weasyprint-"`
 
 ### How to run conversion chains not based on docx documents
 
 By specifying a XML or HTML input file on the command line you can inject your own source file into a custom conversion chain. The following command e.g. performs an `xml -> html -> pdf` conversion without requiring a docx file:
 
-`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx xml-file='Dummy_Article_Template.docx_SaxonHE.xml' html- weasyprint-"`
+`podman exec <your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain xml-file='Dummy_Article_Template.docx_SaxonHE.xml' html- weasyprint-"`
 
 Please don't forget to put all dependent files into the media folder.
 
@@ -191,7 +191,7 @@ An empty HTML template that loads the development CSS and the Pagedjs polyfill i
 
 To run a set of different tests use:
 
-`podman exec \<your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && processDocx runtests"
+`podman exec \<your-container-name> /bin/bash -c "cd /root/xmlworkflow/work && runConversionChain runtests"
 
 ## How to handle Mathjax fonts
 

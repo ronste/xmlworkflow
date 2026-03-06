@@ -124,11 +124,11 @@ RUN set -xe && cd root \
     && eval "$(luarocks path)" \
     && cd .. \
     && rm luarocks-${LUAROCKS_VERSION}.tar.gz \
-    # Setup processDocx command
-    && echo '#!/usr/bin/env bash' > /bin/processDocx \
-    && echo "cd /root/xmlworkflow/work" >> /bin/processDocx \
-    && echo 'just "$@"' >> /bin/processDocx \
-    && chmod u+x /bin/processDocx \
-    && processDocx reset-example
+    # Setup runConversionChain command
+    && echo '#!/usr/bin/env bash' > /bin/runConversionChain \
+    && echo "cd /root/xmlworkflow/work" >> /bin/runConversionChain \
+    && echo 'just "$@"' >> /bin/runConversionChain \
+    && chmod u+x /bin/runConversionChain \
+    && runConversionChain reset-example
 
 WORKDIR /root/xmlworkflow

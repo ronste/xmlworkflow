@@ -1,4 +1,4 @@
-#Validate XML file against DTD provided by DOCTYPE tag. Usage: "processDocx xml-validate <filename>"
+#Validate XML file against DTD provided by DOCTYPE tag. Usage: "runConversionChain xml-validate <filename>"
 [no-cd]
 xml-validate:
   #!/usr/bin/env bash
