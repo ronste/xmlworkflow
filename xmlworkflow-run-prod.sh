@@ -26,7 +26,7 @@ if command -v podman &> /dev/null
 then
     podman run -it --name $1 -d \
         -v ./work:/root/sspworkflow/work \
-        -v ./themes:/root/sspworkflow/themes \
+        # -v ./themes:/root/sspworkflow/themes \ # Don't bind themes folder, as they would not be available inside the container anymore
         -v ./store:/root/sspworkflow/store \
         {containername}
         # binding for full dev mode needs to bind all folders individually (otherwise lib folder will not be available):
@@ -35,7 +35,7 @@ elif command -v docker &> /dev/null
 then
     docker run -it --name $1 -d \
         -v ./work:/root/sspworkflow/work \
-        -v ./themes:/root/sspworkflow/themes \
+        # -v ./themes:/root/sspworkflow/themes \
         -v ./store:/root/sspworkflow/store \
         {containername}
 else
