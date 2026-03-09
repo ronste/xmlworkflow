@@ -26,7 +26,6 @@ New-Item -ItemType Directory -Force -Path "themes" | Out-Null
 $ContainerName = ($ContainerImage -split ":")[0]
 
 $workPath = (Resolve-Path "work").Path
-$themePath = (Resolve-Path "themes").Path
 $storePath = (Resolve-Path "store").Path
 
 # Don't bind themes folder, as they would not be available inside the container anymore.
