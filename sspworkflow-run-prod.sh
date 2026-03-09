@@ -20,7 +20,6 @@ fi
 
 mkdir -p work/metadata
 mkdir -p store
-mkdir -p themes
 
 if command -v podman &> /dev/null
 then
