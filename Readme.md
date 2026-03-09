@@ -55,13 +55,19 @@ Template files and other sources (e.g. css) are dereived from:
 
 1) Create a directory to hold all your working directories and files
 2) From inside this directory start a conatiner with:
-    `. <path-to-your-download-directory>/sspworkflow-run-prod.sh <your-container-name>` to start a container
+
+    Linux/macOS (bash):
+    ```bash
+   . <path-to-your-download-directory>/sspworkflow-run-prod.sh <your-container-name>` to start a container
+    ```
     
-    On Windows (PowerShell) use:
-    `& "<path-to-your-download-directory>\sspworkflow-run-prod.ps1" -ContainerImage "sspworkflow:latest"`
-    
+    Windows (PowerShell):
+    ```powershell
+   & "<path-to-your-download-directory>\sspworkflow-run-prod.ps1" -ContainerImage "sspworkflow:latest"`
+   ```
+     
     Note: The PowerShell script derives the runtime container name from the image name. With `sspworkflow:latest`, the container name will be `sspworkflow`.
-3) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain reset-jats-example"` to use the demo docx file
+4) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain reset-jats-example"` to use the demo docx file
 
    PowerShell example (default container name):
    `podman exec sspworkflow /bin/bash -c "cd /root/sspworkflow/work && runConversionChain reset-jats-example"`
