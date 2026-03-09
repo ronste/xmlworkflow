@@ -67,21 +67,30 @@ Template files and other sources (e.g. css) are dereived from:
    ```
      
     Note: The PowerShell script derives the runtime container name from the image name. With `sspworkflow:latest`, the container name will be `sspworkflow`.
-4) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run `podman exec <your-container-name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain reset-jats-example"` to use the demo docx file
+4) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run
 
-   PowerShell example (default container name):
-   `podman exec sspworkflow /bin/bash -c "cd /root/sspworkflow/work && runConversionChain reset-jats-example"`
+    Linux/macOS (bash):
+    ```bash
+       runConversionChain.sh reset-jats-example
+    ```
+    
+    Windows (PowerShell):
+    ```powershell
+       runConversionChain.ps1 reset-jats-example
+    ```
+to use the demo docx file.
+
+The runConversion scripst are just a shortcut for the generalized command for accessing conatiner functions:
+```bash
+    podman exec <your container name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain <command>"
+```
 
 ### Perfrom a docx converion
 
 To run a full docx to pdf conversion a specifically prepared MS Word docx document needs to be placed inside the working directory. The docx document is requiered to use specific formating templates as explained in the [documentation](Documentation.md).
 Please note that the default conversion chain (which handles metadata from the docx document) is optimized for docx -> Jats XML conversion via Pandoc (for customized conversion chains see [below](#how-to-run-a-custom-conversion-chain)).
 
-Start the docx conversion with the following command:
-    - `podman exec <your-container-name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain"`
-
-Windows PowerShell example (default container name):
-    - `podman exec sspworkflow /bin/bash -c "cd /root/sspworkflow/work && runConversionChain"`
+Start the docx conversion with the following command: `runConversionChain`
 
 This will create a range of intermediate and final files in the working directory which will be named according to the conversion step (tool) they are corresponding to. E.g. `<docx-filename>_SaxonHE.html` or `<docx-filename>_weasyprint.pdf`.
 
