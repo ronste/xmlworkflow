@@ -5,6 +5,7 @@
   <entry key="xref.ref-type.bibr" value="bibr"/>
   <entry key="caption.label-delimiter" value="#"/>
   <entry key="id.figure-prefix" value="figure-"/>
+  <entry key="id.table-prefix" value="table-"/>
   <entry key="id.aff-prefix" value="aff-"/>
   <entry key="license.ccby.href" value="./media/ccby.png"/>
 </resources>

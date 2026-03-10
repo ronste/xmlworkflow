@@ -21,6 +21,11 @@
                 $default
             )[1])"/>
     </xsl:function>
+
+    <xsl:function name="cfg:norm" as="xs:string">
+        <xsl:param name="value" as="xs:string?"/>
+        <xsl:sequence select="replace(lower-case(normalize-space(string($value))), '\s+', ' ')"/>
+    </xsl:function>
     
     <xsl:output method="xml" standalone="no"
         doctype-public="-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v1.3 20210610//EN" 
@@ -93,8 +98,139 @@
         </table-wrap>
     </xsl:template>
 
+    <!-- Normalize table-wrap with existing caption to ensure stable id/label for xref linking -->
+    <xsl:template match="//table-wrap[caption]">
+        <xsl:variable name="label-delimiter" select="cfg:get('caption.label-delimiter', '#')"/>
+        <xsl:variable name="table-id-prefix" select="cfg:get('id.table-prefix', 'table-')"/>
+        <xsl:variable name="table_num" select="count(preceding::table-wrap) + 1"/>
+        <xsl:variable name="caption_specific_use" select="string(caption/p[1]/@specific-use)"/>
+        <xsl:variable name="label_from_specific"
+            select="if (contains($caption_specific_use, $label-delimiter))
+                    then normalize-space(substring-after($caption_specific_use, $label-delimiter))
+                    else ''"/>
+        <xsl:variable name="table_label"
+            select="if (normalize-space(string(label)) != '')
+                    then normalize-space(string(label))
+                    else if ($label_from_specific != '')
+                    then $label_from_specific
+                    else string($table_num)"/>
+        <xsl:variable name="table_id"
+            select="if (normalize-space(string(@id)) != '')
+                    then string(@id)
+                    else if (contains($caption_specific_use, $label-delimiter))
+                    then replace(normalize-space(substring-before($caption_specific_use, $label-delimiter)), ' ', '-')
+                    else concat($table-id-prefix, $table_num)"/>
+        <table-wrap id="{$table_id}">
+            <xsl:apply-templates select="@*[name() != 'id']"/>
+            <label>
+                <xsl:value-of select="$table_label"/>
+            </label>
+            <xsl:apply-templates select="caption"/>
+            <xsl:apply-templates select="node()[not(self::caption or self::label)]"/>
+        </table-wrap>
+    </xsl:template>
+
     <!-- Skip boxed-text[starts-with(@specific-use, 'table')] to prevent duplication, this is handled in //table-wrap -->
     <xsl:template match="//boxed-text[starts-with(@specific-use, 'table')]"/>
+
+    <!-- Rewrite unresolved in-text references to typed figure/table links by matching normalized labels -->
+    <xsl:template match="xref[not(@ref-type)]">
+        <xsl:variable name="figure-prefix" select="cfg:get('specific-use.figure-prefix', 'figure')"/>
+        <xsl:variable name="label-delimiter" select="cfg:get('caption.label-delimiter', '#')"/>
+        <xsl:variable name="figure-id-prefix" select="cfg:get('id.figure-prefix', 'figure-')"/>
+        <xsl:variable name="table-prefix" select="cfg:get('specific-use.table-prefix', 'table')"/>
+        <xsl:variable name="table-id-prefix" select="cfg:get('id.table-prefix', 'table-')"/>
+        <xsl:variable name="xref_label" select="string((@alt, normalize-space(string(.)))[1])"/>
+        <xsl:variable name="xref_key" select="cfg:norm($xref_label)"/>
+        <xsl:variable name="xref_lower" select="lower-case($xref_label)"/>
+        <xsl:variable name="xref_num" as="xs:integer?"
+            select="if (matches($xref_label, '\d+\s*$'))
+                    then xs:integer(replace($xref_label, '^.*?(\d+)\s*$', '$1'))
+                    else ()"/>
+        <xsl:variable name="is_fig_hint"
+            select="contains($xref_lower, 'abbildung') or contains($xref_lower, 'figure') or contains($xref_lower, 'fig')"/>
+        <xsl:variable name="is_table_hint"
+            select="contains($xref_lower, 'tabelle') or contains($xref_lower, 'table')"/>
+        <xsl:variable name="fig_target"
+            select="(root(.)//fig[
+                        cfg:norm(string(label)) = $xref_key
+                        or cfg:norm(
+                            if (contains(string(caption/boxed-text[starts-with(@specific-use, $figure-prefix)][1]/@specific-use), $label-delimiter))
+                            then substring-after(string(caption/boxed-text[starts-with(@specific-use, $figure-prefix)][1]/@specific-use), $label-delimiter)
+                            else ''
+                        ) = $xref_key
+                    ])[1]"/>
+        <xsl:variable name="table_target"
+            select="(root(.)//table-wrap[
+                        cfg:norm(string(label)) = $xref_key
+                        or cfg:norm(
+                            if (contains(string(caption/p[1]/@specific-use), $label-delimiter))
+                            then substring-after(string(caption/p[1]/@specific-use), $label-delimiter)
+                            else ''
+                        ) = $xref_key
+                        or cfg:norm(
+                            if (contains(string(caption/p[1]/boxed-text[1]/@specific-use), $label-delimiter))
+                            then substring-after(string(caption/p[1]/boxed-text[1]/@specific-use), $label-delimiter)
+                            else ''
+                        ) = $xref_key
+                        or cfg:norm(
+                            if (contains(string((preceding-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter))
+                            then substring-after(string((preceding-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter)
+                            else ''
+                        ) = $xref_key
+                        or cfg:norm(
+                            if (contains(string((following-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter))
+                            then substring-after(string((following-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter)
+                            else ''
+                        ) = $xref_key
+                    ])[1]"/>
+        <xsl:variable name="fig_target_fallback"
+            select="if ($is_fig_hint and exists($xref_num)) then (root(.)//fig)[$xref_num] else ()"/>
+        <xsl:variable name="table_target_fallback"
+            select="if ($is_table_hint and exists($xref_num)) then (root(.)//table-wrap)[$xref_num] else ()"/>
+        <xsl:variable name="fig_target_resolved" select="($fig_target, $fig_target_fallback)[1]"/>
+        <xsl:variable name="table_target_resolved" select="($table_target, $table_target_fallback)[1]"/>
+        <xsl:variable name="fig_target_id"
+            select="if (exists($fig_target_resolved))
+                    then if (normalize-space(string($fig_target_resolved/@id)) != '')
+                    then string($fig_target_resolved/@id)
+                    else concat($figure-id-prefix, count($fig_target_resolved/preceding::fig[caption/boxed-text[starts-with(@specific-use, $figure-prefix)]]) + 1)
+                    else ''"/>
+        <xsl:variable name="table_target_id"
+            select="if (exists($table_target_resolved))
+                    then if (normalize-space(string($table_target_resolved/@id)) != '')
+                    then string($table_target_resolved/@id)
+                    else if (contains(string($table_target_resolved/caption/p[1]/@specific-use), $label-delimiter))
+                    then replace(normalize-space(substring-before(string($table_target_resolved/caption/p[1]/@specific-use), $label-delimiter)), ' ', '-')
+                    else if (contains(string($table_target_resolved/caption/p[1]/boxed-text[1]/@specific-use), $label-delimiter))
+                    then replace(normalize-space(substring-before(string($table_target_resolved/caption/p[1]/boxed-text[1]/@specific-use), $label-delimiter)), ' ', '-')
+                    else if (contains(string(($table_target_resolved/preceding-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter))
+                    then replace(normalize-space(substring-before(string(($table_target_resolved/preceding-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter)), ' ', '-')
+                    else if (contains(string(($table_target_resolved/following-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter))
+                    then replace(normalize-space(substring-before(string(($table_target_resolved/following-sibling::*[1][self::boxed-text[starts-with(@specific-use, $table-prefix)]]/@specific-use)[1]), $label-delimiter)), ' ', '-')
+                    else concat($table-id-prefix, count($table_target_resolved/preceding::table-wrap) + 1)
+                    else ''"/>
+        <xsl:choose>
+            <xsl:when test="exists($fig_target_resolved)">
+                <xref ref-type="fig" rid="{$fig_target_id}">
+                    <xsl:apply-templates select="@*[name() != 'ref-type' and name() != 'rid']|node()"/>
+                </xref>
+            </xsl:when>
+            <xsl:when test="exists($table_target_resolved)">
+                <xref ref-type="table" rid="{$table_target_id}">
+                    <xsl:apply-templates select="@*[name() != 'ref-type' and name() != 'rid']|node()"/>
+                </xref>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message>
+                    <xsl:value-of select="concat('Unresolved non-bibliographic xref: ', $xref_label, ' (rid=', @rid, ')')"/>
+                </xsl:message>
+                <xsl:copy>
+                    <xsl:apply-templates select="@*|node()"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     
     <!-- handle affiliations -->
     <!-- RS: required -->
