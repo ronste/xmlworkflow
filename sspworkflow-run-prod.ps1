@@ -29,10 +29,13 @@ $storePath = (Resolve-Path "store").Path
 
 # Don't bind themes folder, as they would not be available inside the container anymore.
 if (Get-Command podman -ErrorAction SilentlyContinue) {
-    if (podman container exists $ContainerName) {
+    podman container exists --external $ContainerName *> $null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "Container '$ContainerName' already exists. Starting it..."
         podman start $ContainerName | Out-Null
     }
     else {
+        Write-Host "Container '$ContainerName' does not exist. Creating and starting it..."
         podman run -it --name $ContainerName -d `
             -v "${workPath}:/root/sspworkflow/work" `
             -v "${storePath}:/root/sspworkflow/store" `
@@ -42,9 +45,11 @@ if (Get-Command podman -ErrorAction SilentlyContinue) {
 elseif (Get-Command docker -ErrorAction SilentlyContinue) {
     docker container inspect $ContainerName *> $null
     if ($LASTEXITCODE -eq 0) {
+        write-Host "Container '$ContainerName' already exists. Starting it..."
         docker start $ContainerName | Out-Null
     }
     else {
+        write-Host "Container '$ContainerName' does not exist. Creating and starting it..."
         docker run -it --name $ContainerName -d `
             -v "${workPath}:/root/sspworkflow/work" `
             -v "${storePath}:/root/sspworkflow/store" `
