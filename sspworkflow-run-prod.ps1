@@ -20,7 +20,6 @@ $null = $Mode
 
 New-Item -ItemType Directory -Force -Path "work/metadata" | Out-Null
 New-Item -ItemType Directory -Force -Path "store" | Out-Null
-New-Item -ItemType Directory -Force -Path "themes" | Out-Null
 
 # Container names cannot include ':', so derive a stable runtime name from the image name.
 $ContainerName = ($ContainerImage -split ":")[0]
@@ -30,16 +29,27 @@ $storePath = (Resolve-Path "store").Path
 
 # Don't bind themes folder, as they would not be available inside the container anymore.
 if (Get-Command podman -ErrorAction SilentlyContinue) {
-    podman run -it --name $ContainerName -d `
-        -v "${workPath}:/root/sspworkflow/work" `
-        -v "${storePath}:/root/sspworkflow/store" `
-        $ContainerImage
+    if (podman container exists $ContainerName) {
+        podman start $ContainerName | Out-Null
+    }
+    else {
+        podman run -it --name $ContainerName -d `
+            -v "${workPath}:/root/sspworkflow/work" `
+            -v "${storePath}:/root/sspworkflow/store" `
+            $ContainerImage | Out-Null
+    }
 }
 elseif (Get-Command docker -ErrorAction SilentlyContinue) {
-    docker run -it --name $ContainerName -d `
-        -v "${workPath}:/root/sspworkflow/work" `
-        -v "${storePath}:/root/sspworkflow/store" `
-        $ContainerImage
+    docker container inspect $ContainerName *> $null
+    if ($LASTEXITCODE -eq 0) {
+        docker start $ContainerName | Out-Null
+    }
+    else {
+        docker run -it --name $ContainerName -d `
+            -v "${workPath}:/root/sspworkflow/work" `
+            -v "${storePath}:/root/sspworkflow/store" `
+            $ContainerImage | Out-Null
+    }
 }
 else {
     Write-Error "Neither Podman nor Docker is installed. Please install one of them to run the container."
