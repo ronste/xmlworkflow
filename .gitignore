@@ -4,3 +4,4 @@ settings.json
 store/*
 .vscode
 lib
+node_modules
