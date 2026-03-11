@@ -1,4 +1,4 @@
-# XML Workflow Image
+# Single Source Publishing Workflow Image
 
 - Version: 1.6 (04.03.2026)
 - Developed by: Ronald Steffen
