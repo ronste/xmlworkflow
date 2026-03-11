@@ -16,7 +16,8 @@ ENV SYS_PACKAGES \
     nano \
 	curl \
     unzip \
-    sudo
+    sudo \
+    bash-completion
 
 # development packages
 ENV DEV_PACKAGES \
@@ -112,6 +113,9 @@ RUN set -xe && cd root \
        just-install \
         #    puppeteer \ # used by pagedjs
         #    pagedjs-cli@latest # still outdated -> find alternative
+    # just Bash completion
+    && mkdir -p /etc/bash_completion.d \
+    && just --completions bash > /etc/bash_completion.d/just \
     # Setup npm and install local packages from package.json
     && npm ci --omit=dev --omit=optional \
     # for pandoc custom writer

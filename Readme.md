@@ -67,6 +67,13 @@ Template files and other sources (e.g. css) are dereived from:
    ```
      
     Note: The PowerShell script derives the runtime container name from the image name. With `sspworkflow:latest`, the container name will be `sspworkflow`.
+3) Optional (PowerShell): enable tab completion for `runConversionChain`, `runConversionChain.ps1`, and `rcc`:
+
+    ```powershell
+    & "<path-to-your-download-directory>\setup-completion.ps1" -ContainerName "sspworkflow"
+    ```
+
+    This creates a user completion file and updates your PowerShell profile to load it automatically.
 4) Prepare your working directory by either copying a docx file into the folder `work` or, alternatively, run
 
     Linux/macOS (bash):
