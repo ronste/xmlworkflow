@@ -1,11 +1,17 @@
 param(
-    [string]$ContainerName = "sspworkflow",
+    [AllowEmptyString()]
+    [string]$ContainerName,
     [string]$ProfilePath = $PROFILE,
     [switch]$Force
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+$defaultContainerName = "sspworkflow"
+if ([string]::IsNullOrWhiteSpace($ContainerName)) {
+    $ContainerName = $defaultContainerName
+}
 
 function Get-ContainerRuntime {
     if (Get-Command podman -ErrorAction SilentlyContinue) {
@@ -80,19 +86,40 @@ $quotedCompletions = $allCompletions | ForEach-Object { "'$_'" }
 $completionLiteral = ($quotedCompletions -join ", ")
 
 $completionScript = @"
-`$script:SspworkflowCompletions = @($completionLiteral)
+`$global:SspworkflowCompletions = @($completionLiteral)
 
-function runConversionChain {
-    param([Parameter(ValueFromRemainingArguments = `$true)][string[]]`$Args)
-    & "$wrapperPath" @Args
+function global:runConversionChain {
+    param(
+        [Parameter(Position = 0)]
+        [ArgumentCompleter({
+            param(`$commandName, `$parameterName, `$wordToComplete, `$commandAst, `$fakeBoundParameters)
+
+            foreach (`$entry in `$global:SspworkflowCompletions) {
+                if (`$entry -like "`$wordToComplete*") {
+                    [System.Management.Automation.CompletionResult]::new(`$entry, `$entry, 'ParameterValue', `$entry)
+                }
+            }
+        })]
+        [string]`$FirstArgument,
+
+        [Parameter(Position = 1, ValueFromRemainingArguments = `$true)]
+        [string[]]`$RemainingArgs
+    )
+
+    if ([string]::IsNullOrWhiteSpace(`$FirstArgument)) {
+        & "$wrapperPath" @RemainingArgs
+    }
+    else {
+        & "$wrapperPath" `$FirstArgument @RemainingArgs
+    }
 }
 
 Set-Alias -Name rcc -Value runConversionChain -Scope Global
 
-Register-ArgumentCompleter -CommandName 'runConversionChain', 'runConversionChain.ps1', 'rcc' -ScriptBlock {
+Register-ArgumentCompleter -CommandName 'runConversionChain.ps1' -ScriptBlock {
     param(`$commandName, `$parameterName, `$wordToComplete, `$commandAst, `$fakeBoundParameters)
 
-    foreach (`$entry in `$script:SspworkflowCompletions) {
+    foreach (`$entry in `$global:SspworkflowCompletions) {
         if (`$entry -like "`$wordToComplete*") {
             [System.Management.Automation.CompletionResult]::new(`$entry, `$entry, 'ParameterValue', `$entry)
         }
@@ -115,9 +142,9 @@ if (-not (Test-Path $ProfilePath)) {
     New-Item -ItemType File -Path $ProfilePath -Force | Out-Null
 }
 
-$sourceLine = ". \"$completionPath\""
+$sourceLine = ". `"$completionPath`""
 $profileContent = Get-Content -Path $ProfilePath -Raw
-if ($profileContent -notlike "*$sourceLine*") {
+if (-not ($profileContent -match [regex]::Escape($sourceLine))) {
     Add-Content -Path $ProfilePath -Value "`n$sourceLine"
     Write-Host "Added completion import to profile: $ProfilePath"
 }
@@ -126,6 +153,7 @@ else {
 }
 
 . $completionPath
+. $ProfilePath
 
 Write-Host "PowerShell completion is configured for runConversionChain, runConversionChain.ps1 and rcc."
-Write-Host "Open a new PowerShell session, or run: . \"$ProfilePath\""
+Write-Host "Current session reloaded profile: $ProfilePath"

@@ -54,23 +54,24 @@ Template files and other sources (e.g. css) are dereived from:
 ### Prepare working environment
 
 1) Create a directory to hold all your working directories and files
-2) From inside this directory start a conatiner with:
+2) Start the sspworkflow conatiner with:
 
     Linux/macOS (bash):
     ```bash
-   . <path-to-your-download-directory>/sspworkflow-run-prod.sh <your-container-name>` to start a container
+   . sspworkflow-run-prod.sh <your-container-name>` to start a container
     ```
     
     Windows (PowerShell):
     ```powershell
-   & "<path-to-your-download-directory>\sspworkflow-run-prod.ps1" -ContainerImage "sspworkflow:latest"`
+   & "sspworkflow-run-prod.ps1" -ContainerImage "sspworkflow:latest"`
    ```
      
-    Note: The PowerShell script derives the runtime container name from the image name. With `sspworkflow:latest`, the container name will be `sspworkflow`.
+    Note: If no container name is provided `sspworkflow` will be used.
+
 3) Optional (PowerShell): enable tab completion for `runConversionChain`, `runConversionChain.ps1`, and `rcc`:
 
     ```powershell
-    & "<path-to-your-download-directory>\setup-completion.ps1" -ContainerName "sspworkflow"
+    & "setup-completion.ps1" -ContainerName "sspworkflow"
     ```
 
     This creates a user completion file and updates your PowerShell profile to load it automatically.
@@ -87,7 +88,7 @@ Template files and other sources (e.g. css) are dereived from:
     ```
 to use the demo docx file.
 
-The runConversion scripst are just a shortcut for the generalized command for accessing conatiner functions:
+The runConversionChain scripts (the alias `rcc` could also be used) are just a shortcut for the generalized command for accessing conatiner functions:
 ```bash
     podman exec <your container name> /bin/bash -c "cd /root/sspworkflow/work && runConversionChain <command>"
 ```
@@ -109,7 +110,11 @@ Windows PowerShell example (default container name):
 
 `podman exec sspworkflow /bin/bash -c "cd /root/sspworkflow/work && runConversionChain help"`
 
-which will output:
+or, with the helper scripts and alias (Linux and Windows Powershell):
+
+`rcc help`
+
+which will output something like:
 
 ```text
 Usage: [ runConversionChain | just ] [ theme=<theme> | debug=true | validate=true | develop=true  | pagedjs-polyfill=true ] [ docx-file | xml-file | html-file =<filename> ] [ <recipe> ]

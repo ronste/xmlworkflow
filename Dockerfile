@@ -133,6 +133,7 @@ RUN set -xe && cd root \
     && echo "cd /root/sspworkflow/work" >> /bin/runConversionChain \
     && echo 'just "$@"' >> /bin/runConversionChain \
     && chmod u+x /bin/runConversionChain \
+    && echo "alias rcc='runConversionChain'" >> /etc/bash.bashrc \
     && runConversionChain reset-example
 
 WORKDIR /root/sspworkflow
